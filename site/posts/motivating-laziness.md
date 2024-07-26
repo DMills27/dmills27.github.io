@@ -8,6 +8,50 @@ tags: [lambda-calculus]
 
 # Introduction
 
+This is a test
+ 
+\\[\zeta_t + \phi + \pi = \emptyset \\]
+
+\[\gamma\_u^6 + \phi + \pi = \emptyset \]
+
+\( R\_i + \phi + \pi = \emptyset \)
+
+$\alpha + \beta = 7$
+
+$\phi + \pi = \emptyset$
+
+$$\phi + \pi = \emptyset$$
+
+$$\begin{align} \beta + \eta(x) = y \cdots \end{align}$$
+
+
+\\(  \partial_x \phi + \pi = \emptyset \\)
+
+| Item              | In Stock | Price |
+| :---------------- | :------: | ----: |
+| Python Hat        |   True   | 23.99 |
+| SQL Hat           |   True   | 23.99 |
+| Codecademy Tee    |  False   | 19.99 |
+| Codecademy Hoodie |  False   | 42.99 |
+
+```{.haskell .numberLines}
+solve :: Input -> Int
+solve (Input system parts) =
+  sum
+  . map (\(Part x m a s) -> x + m + a + s)
+  . filter (runSystem system)
+  $ parts
+```
+```{.java .numberLines}
+static <T> void printRecursive(Tree<T> tree) {
+  if (tree != null) {
+    printRecursive(tree.left);
+    System.out.print(tree.content);
+    printRecursive(tree.right);
+  }
+}
+```
+
 This is the first  in a series of blog posts I am writing, about a book by Greg Michaelson called _An Introduction to Functional Programming Through Lambda Calculus_ (referred to as 'The Book' throughout). Prior to reading this book, I already had a cursory understanding of the lambda calculus, but I wanted to solidify my understanding as well as find connections to my primary area of interest; coding in Haskell. The format of these posts won't be a review of the book, but rather an exposition of the three observations I found most interesting. This particular post looks at evaluation order. Before reading the book I found evaluation order an impenetrable subject, it reminded me of order of operations from grade school math, and most explanations I came across were crucially missing the _why_. I suppose evaluation order is a low-level, procedural mechanism, and those who study it usually approach it as an application of the theory they already understand. I am coming at this subject from the opposite direction, I am an end-user of Haskell with no computer science background, so evaluation order is the first layer of theory beneath the surface of Haskell’s pleasant high level syntax. I hope that a short overview of evaluation order can help us understand why laziness is such a natural choice for Haskell; a language built on top of the lambda calculus.
 
 > N.B. this post assumes basic familiarity with the syntax of lambda calculus [this is not a bad starting point](https://personal.utdallas.edu/~gupta/courses/apl/lambda.pdf)

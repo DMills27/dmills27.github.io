@@ -31,8 +31,9 @@ import Text.Pandoc (
   ReaderOptions (..),
   extensionsFromList,
   githubMarkdownExtensions,
+  pandocExtensions
  )
-import Text.Pandoc.Options (def)
+import Text.Pandoc.Options (def, writerExtensions, writerHTMLMathMethod, HTMLMathMethod(..))
 
 {------------------------------------------------
                     Config
@@ -41,11 +42,11 @@ import Text.Pandoc.Options (def)
 siteMeta :: SiteMeta
 siteMeta =
   SiteMeta
-    { siteAuthor = "jonathanlorimer"
+    { siteAuthor = "dominicmills"
     , baseUrl = "https://jonathanlorimer.dev"
-    , siteTitle = "Jonathan Lorimer"
-    , githubUser = "jonathanlorimer"
-    , linkedInUser = "jonathan-lorimer-dev"
+    , siteTitle = "Dominic Mills"
+    , githubUser = "DMills27"
+    , linkedInUser = "dominic-mills-howell-14a658179"
     , twitterUser = "jonathanlorime1"
     , mastodonUser = "jonathanlorimer"
     , image = "personalLogo1200px.png"
@@ -172,9 +173,14 @@ mdToHTML = markdownToHTMLWithOpts markdownOptions defaultHtml5Options
                 , Ext_fenced_code_attributes
                 , Ext_auto_identifiers
                 , Ext_footnotes
-                , Ext_footnotes
                 , Ext_link_attributes
                 , Ext_pipe_tables
+                , Ext_tex_math_dollars
+                , Ext_tex_math_single_backslash
+                , Ext_latex_macros
+                , Ext_fenced_code_blocks
+                , Ext_backtick_code_blocks
+                , Ext_fenced_code_attributes
                 ]
             , githubMarkdownExtensions
             ]

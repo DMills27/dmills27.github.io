@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head profile="http://www.w3.org/2005/10/profile">
+    <!--Highlight.js-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!--KaTeX-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+
+    <!-- Calls various javascript scripts -->    
+    <script async src="../js/script.js"></script>
+    <script async src="../js/post-styling.js"></script>
+    <!-- -->
+
     <meta charset="UTF-8">
     <meta name="description" content="{{siteTitle}}">
     <meta name="author" content="{{siteAuthor}}">
@@ -60,6 +78,8 @@
     <link rel="stylesheet" href="/css/education.css">
     <link rel="stylesheet" href="/css/post-list.css">
     <link rel="stylesheet" href="/css/post.css">
-    <link rel="stylesheet" href="/css/syntax.css">
+    <!-- <link rel="stylesheet" href="/css/syntax.css"> -->
+    <link rel="stylesheet" href="/css/code.css">
+    <!-- <link rel="stylesheet" href="/css/default.css"> -->
     <link rel="stylesheet" href="/css/footer.css">
 </head>

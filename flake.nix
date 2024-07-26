@@ -20,6 +20,7 @@
         nixpkgs.lib.genAttrs [
           "x86_64-linux"
           "aarch64-linux"
+          "x86_64-darwin"
         ] (system: function rec {
           inherit system;
           pkgs = nixpkgs.legacyPackages.${system};
@@ -54,6 +55,7 @@
             watchexec
             forester.packages.${system}.default
             texliveFull
+            gcc
           ] ++ 
           pkgs.lib.attrsets.attrValues (import ./scripts { 
             inherit pkgs; 
@@ -64,6 +66,7 @@
           }); 
         }
       );
+
 
       # nix build
       packages = forAllSystems ({hsPkgs, ...}: rec {
