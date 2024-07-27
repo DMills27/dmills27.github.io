@@ -16,8 +16,7 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Build 🔧
-        run: |
-          nix develop -c build-forest
+        run: nix run
 
       - name: Upload 📁
         uses: actions/upload-pages-artifact@main
