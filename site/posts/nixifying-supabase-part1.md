@@ -6,18 +6,23 @@ description: "An overview of how Nix-related tooling can improve Supabase's plat
 tags: [nix, postgres, supabase]
 ---
 
-I've been interested in utilising Nix and Nix-based tooling to showcase how it can vastly improve developer experience. I've chosen the Supabase platform, more specifically their [Postgres repo](https://github.com/DMills27/postgres), to exhibit these improvements and how they can be generally applied to other projects. The reasons for this choice are as follows:
+I've been eager to explore how Nix and Nix-based tools can significantly enhance developer experience. For this, I’ve zeroed in on the Supabase platform, specifically their [Postgres repo](https://github.com/DMills27/postgres), to showcase these improvements and demonstrate their broader applicability to other projects. Here’s why I chose Supabase:
 
--  Supabase is a popular open source project and thus my findings can be useful for many people who want to self-host their projects. 
--  To highlight how lesser-known, alternative tools can offer a smoother developer experience compared to commonly used ones like Ansible and GitHub Actions. These alternatives can provide benefits such as faster build times, better security hardening, and more deterministic orchestration for large-scale projects.
-- 
+- **Widespread Use**: Supabase is a popular open source project, making my findings valuable for anyone looking to self-host their projects.
 
-Most of the discussion with be focused on these aspects:
+- **Alternative Tools**: I aim to highlight how lesser-known tools can offer a smoother developer experience compared to mainstream options like Ansible and GitHub Actions. These alternatives can deliver faster build times, better security, and more deterministic orchestration for large-scale projects.
 
-1. Delving into how [Garnix](https://garnix.io/) provides a more performant alternative to Github actions. Moreover, detailing the benefits of having access to useful NixOS features without necessarily having to fully opting into NixOS itself.  
-2. Demonstrating how one can develop more sophisticated [Smoke](https://en.wikipedia.org/wiki/Smoke_testing_(software)), [Integration](https://en.wikipedia.org/wiki/Integration_testing) and [Regression testing](https://en.wikipedia.org/wiki/Regression_testing) using NixOS tests as well as providing more involved and practical examples which are either missing or severely underdocumented in the official Nix documentation. 
-3. Showcasing how NixOS can be a more than suitable Ansible replacement that addresses many of Ansible's shortcomings such as configuration drift, lack of atomicity, performance issues, reverting to previous configurations. This builds on the work described [these](https://lmy.medium.com/from-ansible-to-nixos-3a117b140bec) [articles](https://mtlynch.io/notes/nix-first-impressions/) 
-4. To illustrate lesser known features of NixOS that are useful in the context of orchestration and choreography, such as [Impermanence](https://nixos.wiki/wiki/Impermanence), [Specialisation](https://nixos.wiki/wiki/Specialisation) and [Boot Counting](https://fosdem.org/2024/schedule/event/fosdem-2024-3045-automatic-boot-assessment-with-boot-counting/), which is particularly beneficial for SRE, DevOps and Cloud engineers.
+Our discussion will dive into:
+
+- **Garnix vs. GitHub Actions**: Exploring how [Garnix](https://garnix.io/)  offers a more performant alternative to GitHub Actions, and the advantages of leveraging NixOS features without fully committing to NixOS.
+
+- **Advanced Testing with NixOS**: Showing how to develop sophisticated [Smoke](https://en.wikipedia.org/wiki/Smoke_testing_(software)), [Integration](https://en.wikipedia.org/wiki/Integration_testing) and [Regression testing](https://en.wikipedia.org/wiki/Regression_testing) using NixOS, with practical examples that fill the gaps in the official Nix documentation.
+
+- **NixOS as an Ansible Alternative**: Demonstrating how NixOS can effectively replace Ansible, addressing issues like configuration drift, lack of atomicity, performance problems, and difficulties in reverting to previous configurations, building on insights from various articles. This builds on the work described [these](https://lmy.medium.com/from-ansible-to-nixos-3a117b140bec) [articles](https://mtlynch.io/notes/nix-first-impressions/) 
+
+- **Exploring NixOS Features**: Highlighting lesser-known NixOS features that enhance orchestration and choreography, such as Impermanence, Specialisation, and Boot Counting, tailored for SRE, DevOps, and Cloud engineers. To illustrate lesser known features of NixOS that are useful in the context of orchestration and choreography, such as [Impermanence](https://nixos.wiki/wiki/Impermanence), [Specialisation](https://nixos.wiki/wiki/Specialisation) and [Boot Counting](https://fosdem.org/2024/schedule/event/fosdem-2024-3045-automatic-boot-assessment-with-boot-counting/), which is particularly beneficial for SRE, DevOps and Cloud engineers.
+
+Let’s dive into these exciting aspects and see how Nix can transform our development workflows!
 
 
 
