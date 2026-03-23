@@ -1,0 +1,56 @@
+error: Cannot build '/nix/store/ibhz248smyjh7p4dmnrm9qlc0z5jgp2q-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android.drv'.
+       Reason: builder failed with exit code 1.
+       Output paths:
+         /nix/store/lgjpd52fzskafzgc001bhnds3wf7a3q8-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android
+       Last 25 log lines:
+       >           PosixPath('/nix/store/kd4xwxjpjxi71jkm6ka0np72if9rm3y0-move-sbin.sh/lib'),
+       >           PosixPath('/nix/store/pag6l61paj1dc9sv15l7bm5c17xn5kyk-move-systemd-user-units.sh/lib'),
+       >           PosixPath('/nix/store/cmzya9irvxzlkh7lfy6i82gbp0saxqj3-multiple-outputs.sh/lib'),
+       >           PosixPath('/nix/store/x8c40nfigps493a07sdr2pm5s9j1cdc0-patch-shebangs.sh/lib'),
+       >           PosixPath('/nix/store/cickvswrvann041nqxb0rxilc46svw1n-prune-libtool-files.sh/lib'),
+       >           PosixPath('/nix/store/xyff06pkhki3qy1ls77w10s0v79c9il0-reproducible-builds.sh/lib'),
+       >           PosixPath('/nix/store/z7k98578dfzi6l3hsvbivzm7hfqlk0zc-set-source-date-epoch-to-latest.sh/lib'),
+       >           PosixPath('/nix/store/pilsssjjdxvdphlg2h19p0bfx5q0jzkn-strip.sh/lib'),
+       >           PosixPath('/nix/store/r9wbjib6xxjkyb9yvjvrkl4sq61i2lyn-gcc-wrapper-15.2.0/lib'),
+       >           PosixPath('/nix/store/dwiyp91lmxq864plaas14jm14m87sg3f-binutils-wrapper-2.44/lib'),
+       >           PosixPath('/nix/store/x9d8b6arxs2yvhbv5dq3mj7g7ar6pl0b-auto-patchelf-hook/lib'),
+       >           PosixPath('/nix/store/iblzqnqm712rm600czliwq3x6g5fn82f-auto-patchelf-0-unstable-2024-08-14/lib'),
+       >           PosixPath('/nix/store/n21wcnpiydy3fd6kqxkwnzvwvaibmg11-binutils-wrapper-2.44/lib'),
+       >           PosixPath('/nix/store/5p9mhk7qsbd7kmxjbmcd8n0090y00nyb-ruby3.3-google-protobuf-3.25.8-x86_64-linux/lib')],
+       >  'paths': [PosixPath('/nix/store/lgjpd52fzskafzgc001bhnds3wf7a3q8-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android')],
+       >  'recursive': True,
+       >  'runtime_dependencies': []}
+       > setting interpreter of /nix/store/lgjpd52fzskafzgc001bhnds3wf7a3q8-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android/lib/ruby/gems/3.3.0/gems/sass-embedded-1.77.5-x86_64-linux-android/ext/sass/dart-sass/src/dart
+       > searching for dependencies of /nix/store/lgjpd52fzskafzgc001bhnds3wf7a3q8-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android/lib/ruby/gems/3.3.0/gems/sass-embedded-1.77.5-x86_64-linux-android/ext/sass/dart-sass/src/dart
+       >     liblog.so -> not found!
+       > searching for dependencies of /nix/store/lgjpd52fzskafzgc001bhnds3wf7a3q8-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android/lib/ruby/gems/3.3.0/gems/sass-embedded-1.77.5-x86_64-linux-android/ext/sass/dart-sass/src/sass.snapshot
+       > auto-patchelf: 1 dependencies could not be satisfied
+       > error: auto-patchelf could not satisfy dependency liblog.so wanted by /nix/store/lgjpd52fzskafzgc001bhnds3wf7a3q8-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android/lib/ruby/gems/3.3.0/gems/sass-embedded-1.77.5-x86_64-linux-android/ext/sass/dart-sass/src/dart
+       > auto-patchelf failed to find all the required dependencies.
+       > Add the missing dependencies to --libs or use `--ignore-missing="foo.so.1 bar.so etc.so"`.
+       For full logs, run:
+         nix log /nix/store/ibhz248smyjh7p4dmnrm9qlc0z5jgp2q-ruby3.3-sass-embedded-1.77.5-x86_64-linux-android.drv
+building '/nix/store/vfhk816yz4r7l1wsr7pz81h0v1x05ncm-ruby3.3-set-1.1.2.drv'...
+error: Cannot build '/nix/store/cbyz9yia1nabpabq1py93a38j81wrdna-ruby3.3-jekyll-sass-converter-3.1.0.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/z70jfqd65mh4n4y50gr792a4wb0w6qd0-ruby3.3-jekyll-sass-converter-3.1.0
+error: Cannot build '/nix/store/b1gaj3xn4i3yhmwzwnjxdly1xq6wp7i3-seroperson.gitlab.io-ruby-env.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/0p1x0v3a79bka53appn1rs7rvyb5pzh9-seroperson.gitlab.io-ruby-env
+error: Build failed due to failed dependency
+error: Cannot build '/nix/store/sigpqjxwh31qmq54vcpsacsp1ikf3yjv-seroperson.gitlab.io-ruby.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/61si5klry99zkd0k24gbpi3gm8v4kran-seroperson.gitlab.io-ruby
+error: Cannot build '/nix/store/49zpzc634fv6akrakv52sd5vcy0l6j4n-seroperson.gitlab.io.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/m8sd7nrfxry12glj03609547aqxl61ix-seroperson.gitlab.io
+error: Build failed due to failed dependency
+error: Cannot build '/nix/store/1pvkpkj00kpfnssycdbhbbjwrdz2whs7-nix-shell-env.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/v26n1y60gca94kjkxpdx0fmqx2dqlnrs-nix-shell-env
+error: Build failed due to failed dependency
