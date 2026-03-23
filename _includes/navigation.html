@@ -70,10 +70,9 @@
     display: flex;
     align-items: center;
   }
+  /* Keep ul absolutely positioned (from _layout.scss); JS adjusts left/right */
   .nav ul {
-    position: static;
     margin: 0;
-    margin-left: auto;
   }
 }
 /* Dark mode toggle button in nav */
@@ -209,10 +208,10 @@ dark-mode-toggle::part(fieldset) {
   });
 
   /* ── Align nav links with the sidenote zone ───────────────────────────
-   * Mirrors the sidenotes.js calculation: the sidenote zone starts at the
-   * post's right edge.  If there is enough space there to fit all nav
-   * items, move the <ul> to that position via absolute placement.
-   * Falls back to the default layout when the viewport is too narrow.
+   * The ul is always position:absolute (from _layout.scss).
+   * When the right margin is wide enough, shift it to start at the post's
+   * right edge (= sidenote start).  Otherwise keep it at right:0 (default).
+   * Never toggles position so there is no layout flash on resize.
    * ------------------------------------------------------------------- */
   function positionNavLinks() {
     var postEl       = document.querySelector('.post') || document.querySelector('main');
@@ -220,31 +219,36 @@ dark-mode-toggle::part(fieldset) {
     var navContainer = document.querySelector('.nav-container');
     if (!postEl || !navUl || !navContainer) return;
 
-    /* reset any previously applied inline positioning so we can re-measure */
-    navUl.style.position   = '';
+    /* clear any previously applied sidenote-zone overrides */
     navUl.style.left       = '';
+    navUl.style.right      = '';
     navUl.style.top        = '';
+    navUl.style.bottom     = '';
     navUl.style.transform  = '';
-    navUl.style.margin     = '';
     navUl.style.whiteSpace = '';
 
     var postRight  = postEl.getBoundingClientRect().right;
     var spaceRight = window.innerWidth - postRight;
     var ulWidth    = navUl.getBoundingClientRect().width;
 
-    /* only reposition when all items fit comfortably in the right margin */
     if (spaceRight >= ulWidth + 16) {
-      var containerLeft    = navContainer.getBoundingClientRect().left;
-      navUl.style.position  = 'absolute';
+      /* enough room — place ul at sidenote start */
+      var containerLeft     = navContainer.getBoundingClientRect().left;
       navUl.style.left      = Math.round(postRight - containerLeft) + 'px';
+      navUl.style.right     = 'auto';
       navUl.style.top       = '50%';
+      navUl.style.bottom    = 'auto';
       navUl.style.transform = 'translateY(-50%)';
-      navUl.style.margin    = '0';
       navUl.style.whiteSpace = 'nowrap';
     }
+    /* else: CSS default (right:0, bottom:0) applies — all items visible */
+  }
+
+  function debounceNav(fn, ms) {
+    var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); };
   }
 
   window.addEventListener('load', positionNavLinks);
-  window.addEventListener('resize', positionNavLinks);
+  window.addEventListener('resize', debounceNav(positionNavLinks, 50));
 }());
 </script>
