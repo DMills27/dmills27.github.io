@@ -47,19 +47,11 @@
 
       inherit (rubyNix {
         name = "seroperson.gitlab.io";
-        gemset = ./gemset.nix;
-        # defaultGemConfig applies autoPatchelfHook to sass-embedded, which
-        # fails on the x86_64-linux-android variant (needs liblog.so, an
-        # Android system library).  We ignore that missing dep so the android
-        # variant builds cleanly; the x86_64-linux-gnu variant is still fully
-        # patched and works on both NixOS and Ubuntu-with-Nix CI.
-        gemConfig = pkgs.defaultGemConfig // {
-          sass-embedded = attrs: {
-            nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-            buildInputs = [ pkgs.stdenv.cc.cc.lib ];
-            autoPatchelfIgnoreMissingDeps = [ "liblog.so" ];
-          };
-        };
+        # gemset-filtered.nix wraps gemset.nix and strips android platform
+        # targets from sass-embedded; those binaries need liblog.so (an
+        # Android-only system library) which is unavailable on Linux/NixOS.
+        gemset = ./gemset-filtered.nix;
+        gemConfig = pkgs.defaultGemConfig;
       })
         env ruby;
 
