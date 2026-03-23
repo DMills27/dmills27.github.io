@@ -207,5 +207,44 @@ dark-mode-toggle::part(fieldset) {
   document.addEventListener("click", function () {
     dropdown.classList.remove("visible");
   });
+
+  /* ── Align nav links with the sidenote zone ───────────────────────────
+   * Mirrors the sidenotes.js calculation: the sidenote zone starts at the
+   * post's right edge.  If there is enough space there to fit all nav
+   * items, move the <ul> to that position via absolute placement.
+   * Falls back to the default layout when the viewport is too narrow.
+   * ------------------------------------------------------------------- */
+  function positionNavLinks() {
+    var postEl       = document.querySelector('.post') || document.querySelector('main');
+    var navUl        = document.querySelector('.nav ul');
+    var navContainer = document.querySelector('.nav-container');
+    if (!postEl || !navUl || !navContainer) return;
+
+    /* reset any previously applied inline positioning so we can re-measure */
+    navUl.style.position   = '';
+    navUl.style.left       = '';
+    navUl.style.top        = '';
+    navUl.style.transform  = '';
+    navUl.style.margin     = '';
+    navUl.style.whiteSpace = '';
+
+    var postRight  = postEl.getBoundingClientRect().right;
+    var spaceRight = window.innerWidth - postRight;
+    var ulWidth    = navUl.getBoundingClientRect().width;
+
+    /* only reposition when all items fit comfortably in the right margin */
+    if (spaceRight >= ulWidth + 16) {
+      var containerLeft    = navContainer.getBoundingClientRect().left;
+      navUl.style.position  = 'absolute';
+      navUl.style.left      = Math.round(postRight - containerLeft) + 'px';
+      navUl.style.top       = '50%';
+      navUl.style.transform = 'translateY(-50%)';
+      navUl.style.margin    = '0';
+      navUl.style.whiteSpace = 'nowrap';
+    }
+  }
+
+  window.addEventListener('load', positionNavLinks);
+  window.addEventListener('resize', positionNavLinks);
 }());
 </script>
