@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Terminal Navigation Prompt</title>
+
+<style>
+
+body{
+  background:#111;
+  color:#eaeaea;
+  font-family: monospace;
+  padding:40px;
+}
+
+#container{
+  font-size:22px;
+  position:relative;
+}
+
+#prefix{
+  color:#7aa2f7;
+}
+
+#cursor{
+  display:inline-block;
+  width:10px;
+  height:1em;
+  background:#eaeaea;
+  margin-left:3px;
+  cursor:pointer;
+  animation: blink 1s steps(2,start) infinite;
+}
+
+@keyframes blink{
+  0%{opacity:1}
+  50%{opacity:0}
+  100%{opacity:1}
+}
+
+#history{
+  position:absolute;
+  top:32px;
+  left:0;
+  background:#0d0d0d;
+  border:1px solid #333;
+  padding:10px 12px;
+  min-width:260px;
+  opacity:0;
+  transform:translateY(-5px);
+  pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+}
+
+#history.visible{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.history-item{
+  padding:3px 0;
+  cursor:pointer;
+}
+
+.history-item:hover{
+  color:#7aa2f7;
+}
+
+.history-title{
+  color:#888;
+  margin-bottom:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="container">
+
+<span id="prefix">></span>
+<span id="text"></span>
+<span id="cursor"></span>
+
+<div id="history">
+<div class="history-title">history</div>
+<div id="history-list"></div>
+</div>
+
+</div>
+
+<script>
+
+/* ------------------------
+URL → terminal path
+------------------------ */
+
+function getPromptPath(){
+  let path = window.location.pathname
+  if(path === "/") return "~"
+  return "~" + path
+}
+
+const fullText = getPromptPath()
+
+/* ------------------------
+typing animation
+------------------------ */
+
+const textEl = document.getElementById("text")
+let i = 0
+
+function type(){
+  if(i < fullText.length){
+    textEl.textContent += fullText[i]
+    i++
+    setTimeout(type,50)
+  }
+}
+
+setTimeout(type,200)
+
+/* ------------------------
+history tracking
+------------------------ */
+
+const path = window.location.pathname
+
+let history = JSON.parse(sessionStorage.getItem("navHistory") || "[]")
+
+if(!history.includes(path)){
+  history.push(path)
+}
+
+sessionStorage.setItem("navHistory", JSON.stringify(history))
+
+/* ------------------------
+render history dropdown
+------------------------ */
+
+const historyList = document.getElementById("history-list")
+
+function renderHistory(){
+
+  historyList.innerHTML=""
+
+  history.slice().reverse().forEach(p=>{
+
+    const item = document.createElement("div")
+    item.className="history-item"
+
+    const label = p === "/" ? "~" : "~"+p
+
+    item.textContent = label
+
+    item.onclick=()=>{
+      window.location.href = p
+    }
+
+    historyList.appendChild(item)
+
+  })
+
+}
+
+renderHistory()
+
+/* ------------------------
+cursor toggle
+------------------------ */
+
+const cursor = document.getElementById("cursor")
+const dropdown = document.getElementById("history")
+
+cursor.addEventListener("click",(e)=>{
+
+  e.stopPropagation()
+
+  dropdown.classList.toggle("visible")
+
+})
+
+document.addEventListener("click",()=>{
+  dropdown.classList.remove("visible")
+})
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+// Bibliography section appended to posts that contain citations.
+
+.bibliography {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $grey-2;
+  font-size: 0.88rem;
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: $grey-1;
+  }
+
+  .bibliography-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .bibliography-entry {
+    line-height: 1.55;
+    // citeproc-ruby wraps each entry in a <div class="csl-entry">
+    .csl-entry {
+      padding-left: 1.5rem;
+      text-indent: -1.5rem;  // hanging indent
+    }
+  }
+}
+
+// Inline citation markers — <span class="citation"> wrapping the formatted text.
+// For author-date styles (APA) the text is already "(Smith, 2020)".
+// For numeric styles (IEEE) it renders as "[1]".
+.citation {
+  a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// Undefined key warning — shown in the rendered page for easy debugging.
+.citation-error {
+  color: #c00;
+  font-style: italic;
+  cursor: help;
+}

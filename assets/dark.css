@@ -1,0 +1,243 @@
+/*
+ * dark.css
+ * Applied when media="(prefers-color-scheme: dark)" or media="all" (user-selected dark).
+ * Overrides the light theme compiled into main.css.
+ */
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+
+html, body {
+  background-color: #1d1c1a;
+  color: #d4cec6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #c0bab2;
+}
+
+a {
+  color: #7ab8ff;
+}
+
+hr {
+  border-color: #38352f;
+}
+
+blockquote {
+  border-left-color: #38352f;
+  color: #8a847c;
+}
+
+/* ── Code block custom properties ─────────────────────────────────────────── */
+
+:root {
+  --code-bgcolor:      #282c34;
+  --code-lnum-color:   #d58989;
+  --code-border-color: #545454;
+}
+
+/* Inline code */
+code {
+  color: #e0a0a0;
+}
+
+/* Language label */
+.code-lang-label {
+  background-color: #2e2c28;
+  color: #8a847c;
+}
+
+/* ── Post ──────────────────────────────────────────────────────────────────── */
+
+.post-info {
+  color: #8a847c;
+}
+
+.post-title {
+  color: #c0bab2;
+}
+
+.post-line {
+  border-top-color: #c0bab2;
+}
+
+.post img + em,
+.post div.svg-img + em {
+  color: #8a847c;
+}
+
+/* ── Navigation ────────────────────────────────────────────────────────────── */
+
+.nav {
+  border-bottom: 1px solid #38352f;
+}
+
+.nav li {
+  color: #8a847c;
+}
+
+.nav-title {
+  color: #d4cec6;
+}
+
+.nav a {
+  color: #8a847c;
+}
+
+.nav a:hover,
+.nav li:hover,
+.nav li:focus {
+  color: #d4cec6;
+}
+
+footer span {
+  color: #8a847c;
+}
+
+/* ── Tables ────────────────────────────────────────────────────────────────── */
+
+table {
+  border-color: #38352f;
+}
+
+table th {
+  border-color: #38352f;
+}
+
+table th:not([colspan]) {
+  border-bottom-color: #38352f;
+}
+
+table td {
+  border-color: #38352f;
+}
+
+/* ── Sidenotes / footnotes ─────────────────────────────────────────────────── */
+
+.sidenote,
+.marginnote {
+  color: #8a847c;
+}
+
+.footnotes {
+  border-top-color: #38352f;
+  color: #8a847c;
+}
+
+/* ── TOC ───────────────────────────────────────────────────────────────────── */
+
+#toc {
+  border-color: #38352f;
+}
+
+#toc a {
+  color: #8a847c;
+}
+
+#toc a:hover {
+  color: #d4cec6;
+}
+
+/* ── Tags ──────────────────────────────────────────────────────────────────── */
+
+.tag {
+  background-color: #2a2825;
+  border-color: #38352f;
+  color: #c0bab2;
+}
+
+.tags-header-title {
+  color: #c0bab2;
+}
+
+.tags-header-line {
+  border-top-color: #c0bab2;
+}
+
+.tags-clouds a {
+  color: #d4cec6;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tags-clouds a:hover,
+.tags-clouds a:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tags-item-label {
+  color: #c0bab2;
+}
+
+.tags-post-title {
+  color: #d4cec6;
+}
+
+.tags-post-line {
+  border-top-color: #c0bab2;
+}
+
+.tags-post-meta {
+  color: #8a847c;
+}
+
+/* ── Post listing (catalogue) ──────────────────────────────────────────────── */
+
+.catalogue-item {
+  border-bottom-color: #38352f;
+  color: #d4cec6;
+}
+
+.catalogue-time {
+  color: #8a847c;
+}
+
+.catalogue-title {
+  color: #c0bab2;
+}
+
+.catalogue-line {
+  border-top-color: #c0bab2;
+}
+
+/* ── Pagination ────────────────────────────────────────────────────────────── */
+
+.pagination {
+  border-top-color: #38352f;
+}
+
+/* ── Bibliography ──────────────────────────────────────────────────────────── */
+
+.bibliography {
+  border-top-color: #38352f;
+  color: #8a847c;
+}
+
+.citation a {
+  color: #7ab8ff;
+}
+
+/* ── Popups ────────────────────────────────────────────────────────────────── */
+
+.popup {
+  background-color: #252321;
+  border-color: #38352f;
+  color: #d4cec6;
+}
+
+.popup-titlebar {
+  background-color: #2a2825;
+  border-bottom-color: #38352f;
+  color: #c0bab2;
+}
+
+.popup-close {
+  color: #8a847c;
+}
+
+/* ── Highlight comments ────────────────────────────────────────────────────── */
+
+.hc-tooltip {
+  background-color: #2a2825;
+  border-color: #38352f;
+  color: #d4cec6;
+}

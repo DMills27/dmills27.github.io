@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Story Architect Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --header-bg: #1a1a1a;
+      --text: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --border: #d2d2d7;
+      --start: #30d158;
+      --end: #8e8e93;
+      --primary: #007aff;
+      --group: #ff9f0a;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --node-w: 260px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-hover: 0 6px 16px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--header-bg);
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    #container {
+      display: flex;
+      height: calc(100vh - 56px);
+    }
+
+    #editor {
+      flex: 1;
+      overflow: auto;
+      background: #f0f2f5;
+      position: relative;
+    }
+
+    #graph-canvas {
+      position: relative;
+      min-height: 100%;
+      width: max(2000px, 100vw);
+      height: max(1200px, 100vh);
+    }
+
+    svg.arrows {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .node, .group {
+      position: absolute;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s;
+      cursor: move;
+      user-select: none;
+    }
+
+    .node {
+      width: var(--node-w);
+      padding: 0;
+      border: 2px solid var(--border);
+    }
+
+    /* COLLAPSE STYLES */
+    .node.compact .node-section,
+    .node.compact .add-scene {
+      display: none;
+    }
+
+    .node.compact {
+      padding-bottom: 6px;
+    }
+
+    .node.expanded {
+      z-index: 50;
+    }
+
+    .focus-mode .node:not(.expanded) {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .group {
+      width: var(--node-w);
+      padding: var(--spacing-md);
+      border: 2px solid var(--group);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .node:hover, .group:hover {
+      box-shadow: var(--shadow-hover);
+      z-index: 30 !important;
+    }
+
+    .node.start { border-color: var(--start); }
+    .node.end { border-color: var(--end); opacity: 0.95; }
+
+    .node-header {
+      padding: var(--spacing-sm) var(--spacing-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .node-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      outline: none;
+      padding: 2px 4px;
+      border-radius: 4px;
+      flex: 1;
+      margin-right: 8px;
+    }
+
+    .node-meta {
+      display: flex;
+      gap: 8px;
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .badge {
+      background: #eef0f4;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .end-pill {
+      background: #e5e5ea;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .node-actions button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .collapse-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .node-section {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .node-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .image-gallery {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-wrap: wrap;
+      margin-top: var(--spacing-xs);
+    }
+
+    /* Gallery item – no transform zoom anymore */
+    .gallery-item {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-item .remove {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ff3b30;
+      color: white;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      pointer-events: auto;
+      font-weight: bold;
+    }
+
+    .dropzone {
+      display: block;
+      width: 100%;
+      padding: var(--spacing-sm);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: var(--spacing-sm);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 72px;
+      padding: var(--spacing-sm);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
+    }
+
+    .choice-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-xs) 0;
+      font-size: 0.92rem;
+    }
+
+    .choice-target {
+      color: var(--primary);
+      font-weight: 500;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .add-choice {
+      display: block;
+      width: 100%;
+      text-align: left;
+      color: var(--primary);
+      background: none;
+      border: none;
+      font-size: 0.92rem;
+      padding: var(--spacing-sm) 0;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .add-scene {
+      padding: 6px 0;
+      text-align: center;
+      color: var(--primary);
+      font-weight: 500;
+      cursor: grab;
+      user-select: none;
+      border-top: 1px dashed var(--border);
+    }
+
+    .add-scene:active {
+      cursor: grabbing;
+    }
+
+    .drop-indicator {
+      position: absolute;
+      width: var(--node-w);
+      height: 4px;
+      background: var(--primary);
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    #player {
+      width: 320px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      padding: var(--spacing-lg);
+    }
+
+    #player .image-gallery {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-md);
+    }
+
+    #play p {
+      margin: 0 0 var(--spacing-md);
+    }
+
+    #play button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .global-actions { display: flex; gap: 12px; }
+
+    .selection-indicator {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    /* Zoom tooltip / thought bubble */
+    #image-zoom-tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 10000;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      padding: 8px;
+      max-width: 300px;
+      max-height: 300px;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    #image-zoom-tooltip img {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span>Story Architect Pro</span>
+  <div class="global-actions">
+    <button class="btn" id="add-node">+ Scene</button>
+    <button class="btn" id="group-scenes">Group Selected</button>
+  </div>
+</header>
+
+<div class="selection-indicator" id="selection-indicator">Click scenes to select</div>
+
+<div id="container">
+  <div id="editor">
+    <div id="graph-canvas">
+      <svg class="arrows"></svg>
+    </div>
+  </div>
+  <div id="player">
+    <h3>Preview</h3>
+    <div id="play"></div>
+  </div>
+</div>
+
+<script>
+// Create zoom tooltip dynamically
+(function() {
+  const tooltip = document.createElement('div');
+  tooltip.id = 'image-zoom-tooltip';
+  tooltip.innerHTML = '<img src="" alt="Zoomed preview">';
+  document.body.appendChild(tooltip);
+})();
+
+let story = {
+  start: 'intro',
+  nodes: {
+    intro: {
+      id: 'intro',
+      title: 'Intro',
+      text: 'You wake up in a dark forest.',
+      images: [],
+      choices: [{ text: 'Follow the light', to: 'clearing' }],
+      x: 0,
+      y: 0
+    },
+    clearing: {
+      id: 'clearing',
+      title: 'Clearing',
+      text: 'A clearing with a small house.',
+      images: [],
+      choices: [
+        { text: 'Enter the house', to: 'house' },
+        { text: 'Walk away', to: 'woods' }
+      ],
+      x: 0,
+      y: 0
+    },
+    house: {
+      id: 'house',
+      title: 'House',
+      text: 'The house is abandoned.',
+      images: [],
+      choices: [],
+      x: 0,
+      y: 0
+    },
+    woods: {
+      id: 'woods',
+      title: 'Woods',
+      text: 'The forest closes in.',
+      images: [],
+      choices: [],
+      x: 0,
+      y: 0
+    }
+  },
+  groups: []
+};
+
+let uiState = { expandedNodeId: null };
+let current = story.start;
+let selectedNodeIds = new Set();
+let dragState = null;
+
+// Hover zoom logic (global)
+let zoomHideTimeout = null;
+document.addEventListener('mouseover', (e) => {
+  const item = e.target.closest('.gallery-item');
+  if (!item) return;
+
+  const img = item.querySelector('img');
+  if (!img || !img.src) return;
+
+  const tooltip = document.getElementById('image-zoom-tooltip');
+  const tooltipImg = tooltip.querySelector('img');
+  tooltipImg.src = img.src;
+
+  tooltip.style.display = 'block';
+  tooltip.style.opacity = '0';
+
+  // Position near cursor
+  let x = e.clientX + 12;
+  let y = e.clientY + 12;
+
+  // Avoid going off-screen
+  const rect = tooltip.getBoundingClientRect();
+  if (x + rect.width > window.innerWidth) x = e.clientX - rect.width - 12;
+  if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - 12;
+
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+
+  clearTimeout(zoomHideTimeout);
+  requestAnimationFrame(() => {
+    tooltip.style.opacity = '1';
+  });
+});
+
+document.addEventListener('mouseout', (e) => {
+  const item = e.target.closest('.gallery-item');
+  if (!item) return;
+
+  const related = e.relatedTarget;
+  if (related && (related === item || item.contains(related))) return;
+
+  const tooltip = document.getElementById('image-zoom-tooltip');
+  tooltip.style.opacity = '0';
+  zoomHideTimeout = setTimeout(() => {
+    tooltip.style.display = 'none';
+  }, 200);
+});
+
+function initializeLayout() {
+  const g = new dagre.graphlib.Graph();
+  g.setGraph({ rankdir: 'TB', marginx: 100, marginy: 100, nodesep: 120, ranksep: 180 });
+  g.setDefaultEdgeLabel(() => ({}));
+
+  Object.keys(story.nodes).forEach(id => {
+    g.setNode(id, { width: 260, height: 320 });
+  });
+
+  Object.values(story.nodes).forEach(node => {
+    node.choices.forEach(choice => {
+      if (story.nodes[choice.to]) {
+        g.setEdge(node.id, choice.to);
+      }
+    });
+  });
+
+  dagre.layout(g);
+  g.nodes().forEach(id => {
+    const n = g.node(id);
+    story.nodes[id].x = n.x;
+    story.nodes[id].y = n.y;
+  });
+}
+
+function compactHTML(node) {
+  return `
+    <div class="node-header">
+      <div class="node-title">${node.title}</div>
+    </div>
+    <div class="node-meta">
+      <span class="badge">${node.images.length} images</span>
+      <span class="badge">${node.choices.length} choices</span>
+      ${node.choices.length === 0 ? '<span class="end-pill">End</span>' : ''}
+    </div>
+  `;
+}
+
+function expandedHTML(node) {
+  const gallery = node.images.map((src, i) => `
+    <div class="gallery-item">
+      <img src="${src}" alt="">
+      <div class="remove" data-index="${i}">×</div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="node-header">
+      <div class="node-title" contenteditable="true" spellcheck="false">${node.title}</div>
+      <div class="node-actions">
+        <button class="collapse-btn" title="Collapse">▾</button>
+        <button class="delete" title="Delete">✕</button>
+      </div>
+    </div>
+    <div class="node-section">
+      <div class="section-label">Images (${node.images.length})</div>
+      <div class="image-gallery">${gallery}</div>
+      <div class="dropzone" data-node="${node.id}">Add Image</div>
+    </div>
+    <div class="node-section">
+      <div class="section-label">Text</div>
+      <textarea>${node.text}</textarea>
+    </div>
+    <div class="node-section">
+      <div class="section-label">Choices</div>
+      <div class="choices-list">
+        ${node.choices.map(c => `
+          <div class="choice-item">
+            <span>${c.text}</span>
+            <span class="choice-target" data-to="${c.to}">${c.to}</span>
+          </div>
+        `).join('')}
+      </div>
+      <button class="add-choice" data-node="${node.id}">+ Add Choice</button>
+    </div>
+    <div class="add-scene" data-parent="${node.id}">+ Add Scene</div>
+  `;
+}
+
+function renderCanvas() {
+  let activeElement = document.activeElement;
+  let focusedNodeId = null;
+  let selectionStart = 0, selectionEnd = 0;
+
+  if (activeElement && activeElement.tagName === 'TEXTAREA') {
+    focusedNodeId = activeElement.closest('.node')?.dataset.id;
+    selectionStart = activeElement.selectionStart;
+    selectionEnd = activeElement.selectionEnd;
+  }
+
+  const canvas = document.getElementById('graph-canvas');
+  const svg = canvas.querySelector('svg.arrows');
+  svg.innerHTML = '';
+
+  if (!svg.querySelector('#arrowhead')) {
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+    marker.setAttribute('id', 'arrowhead');
+    marker.setAttribute('viewBox', '0 0 10 10');
+    marker.setAttribute('refX', '9');
+    marker.setAttribute('refY', '5');
+    marker.setAttribute('orient', 'auto');
+    marker.setAttribute('markerWidth', '5');
+    marker.setAttribute('markerHeight', '5');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', '0,0 10,5 0,10');
+    poly.setAttribute('fill', '#a0a0a0');
+    marker.appendChild(poly);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+  }
+
+  const container = canvas.querySelector('.visual-layer');
+  if (container) container.remove();
+
+  const layer = document.createElement('div');
+  layer.className = 'visual-layer';
+  layer.style.position = 'absolute';
+  layer.style.top = '0';
+  layer.style.left = '0';
+  
+  if (uiState.expandedNodeId) {
+    layer.classList.add('focus-mode');
+  }
+
+  story.groups.forEach(group => {
+    if (group.collapsed) {
+      const el = document.createElement('div');
+      el.className = 'group';
+      el.dataset.groupId = group.id;
+      el.style.left = (group.x - 130) + 'px';
+      el.style.top = (group.y - 60) + 'px';
+      el.innerHTML = `
+        <div style="font-weight:600;margin-bottom:8px;">${group.title}</div>
+        <div style="font-size:0.9rem;color:var(--text-secondary);">${group.members.length} scenes</div>
+      `;
+      layer.appendChild(el);
+    }
+  });
+
+  for (const id in story.nodes) {
+    const node = story.nodes[id];
+    const inCollapsedGroup = story.groups.some(g => g.collapsed && g.members.includes(id));
+    if (inCollapsedGroup) continue;
+
+    const expanded = uiState.expandedNodeId === id;
+    const el = document.createElement('div');
+    el.className = `node ${expanded ? 'expanded' : 'compact'} ${id === story.start ? 'start' : ''} ${node.choices.length === 0 ? 'end' : ''}`;
+    el.dataset.id = id;
+    el.style.left = (node.x - 130) + 'px';
+    el.style.top = (node.y - (expanded ? 160 : 40)) + 'px';
+
+    if (selectedNodeIds.has(id)) {
+      el.style.boxShadow = '0 0 0 3px var(--primary)';
+    }
+
+    el.innerHTML = expanded ? expandedHTML(node) : compactHTML(node);
+    layer.appendChild(el);
+  }
+
+  canvas.appendChild(layer);
+
+  if (focusedNodeId) {
+    const newTextarea = document.querySelector(`.node[data-id="${focusedNodeId}"] textarea`);
+    if (newTextarea) {
+      newTextarea.focus();
+      newTextarea.setSelectionRange(selectionStart, selectionEnd);
+    }
+  }
+
+  bindNonDragEvents();
+
+  const virtualNodes = {};
+  for (const id in story.nodes) {
+    const inCollapsed = story.groups.some(g => g.collapsed && g.members.includes(id));
+    if (!inCollapsed) {
+      virtualNodes[id] = story.nodes[id];
+    }
+  }
+  story.groups.forEach(g => {
+    if (g.collapsed) {
+      virtualNodes[g.id] = { x: g.x, y: g.y };
+    }
+  });
+
+  Object.values(story.nodes).forEach(node => {
+    const sourceGroup = story.groups.find(g => g.collapsed && g.members.includes(node.id));
+    const sourceKey = sourceGroup ? sourceGroup.id : node.id;
+    const sourcePos = virtualNodes[sourceKey];
+    if (!sourcePos) return;
+
+    node.choices.forEach(choice => {
+      const targetNode = story.nodes[choice.to];
+      if (!targetNode) return;
+
+      const targetGroup = story.groups.find(g => g.collapsed && g.members.includes(choice.to));
+      const targetKey = targetGroup ? targetGroup.id : choice.to;
+      const targetPos = virtualNodes[targetKey];
+      if (!targetPos) return;
+
+      const x1 = sourcePos.x;
+      const y1 = sourcePos.y + (sourceGroup ? 30 : 90);
+      const x2 = targetPos.x;
+      const y2 = targetPos.y - (targetGroup ? 30 : 70);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${(y1+y2)/2} ${x2} ${(y1+y2)/2} ${x2} ${y2}`);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', '#c6c6cc');
+      path.setAttribute('stroke-width', '2');
+      path.setAttribute('marker-end', 'url(#arrowhead)');
+      svg.appendChild(path);
+    });
+  });
+}
+
+function bindNonDragEvents() {
+  document.querySelectorAll('.collapse-btn').forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      uiState.expandedNodeId = null;
+      renderCanvas();
+    };
+  });
+
+  document.querySelectorAll('.node').forEach(nodeEl => {
+    nodeEl.ondblclick = e => {
+      if (e.target.closest('button, textarea, [contenteditable]')) return;
+      const id = nodeEl.dataset.id;
+      uiState.expandedNodeId = id;
+      renderCanvas();
+    };
+  });
+
+  document.querySelectorAll('.dropzone').forEach(dropzone => {
+    dropzone.onclick = () => {
+      const nodeId = dropzone.dataset.node;
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.multiple = true;
+      input.onchange = e => {
+        Array.from(e.target.files).forEach(file => {
+          if (file.type.startsWith('image')) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              story.nodes[nodeId].images.push(reader.result);
+              renderCanvas();
+              play(current);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      };
+      input.click();
+    };
+  });
+
+  document.querySelectorAll('.remove').forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const nodeId = e.target.closest('.node').dataset.id;
+      const idx = parseInt(btn.dataset.index);
+      story.nodes[nodeId].images.splice(idx, 1);
+      renderCanvas();
+    };
+  });
+
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.oninput = e => {
+      const nodeId = e.target.closest('.node').dataset.id;
+      story.nodes[nodeId].text = e.target.value;
+      play(current);
+    };
+  });
+
+  document.querySelectorAll('.node-title[contenteditable]').forEach(title => {
+    title.oninput = () => {
+      const nodeId = title.closest('.node').dataset.id;
+      story.nodes[nodeId].title = title.textContent.trim() || 'Untitled';
+    };
+  });
+
+  document.querySelectorAll('.choice-target').forEach(span => {
+    span.onclick = e => {
+      e.stopPropagation();
+      play(span.dataset.to);
+    };
+  });
+
+  document.querySelectorAll('.add-choice').forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const nodeId = btn.dataset.node;
+      const to = prompt("Target scene ID:", "scene_name");
+      if (to && to.trim()) {
+        story.nodes[nodeId].choices.push({ text: "New path", to: to.trim() });
+        renderCanvas();
+      }
+    };
+  });
+
+  document.querySelectorAll('.delete').forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const nodeId = e.target.closest('.node').dataset.id;
+      if (Object.keys(story.nodes).length <= 1) return alert("Need at least one scene.");
+      delete story.nodes[nodeId];
+      if (story.start === nodeId) {
+        story.start = Object.keys(story.nodes)[0];
+      }
+      selectedNodeIds.delete(nodeId);
+      renderCanvas();
+      if (story.start) play(story.start);
+    };
+  });
+
+  document.querySelectorAll('.add-scene').forEach(btn => {
+    btn.addEventListener('mousedown', e => {
+      e.preventDefault();
+      
+      const parentId = btn.dataset.parent;
+      const newNodeId = 'scene_' + Math.random().toString(36).substr(2, 6);
+      let tempNode = {
+        id: newNodeId,
+        title: `Scene ${Object.keys(story.nodes).length + 1}`,
+        text: 'New scene...',
+        images: [],
+        choices: [],
+        x: story.nodes[parentId].x,
+        y: story.nodes[parentId].y + 250,
+      };
+
+      const ghost = document.createElement('div');
+      ghost.innerText = '→ New Scene';
+      ghost.style.position = 'fixed';
+      ghost.style.background = 'rgba(0,122,255,0.1)';
+      ghost.style.border = '1px dashed var(--primary)';
+      ghost.style.borderRadius = '6px';
+      ghost.style.padding = '4px 8px';
+      ghost.style.pointerEvents = 'none';
+      ghost.style.zIndex = '1000';
+      ghost.style.fontSize = '0.85rem';
+      ghost.style.color = 'var(--primary)';
+      document.body.appendChild(ghost);
+
+      let dropIndicator = null;
+      let dropTargetId = null;
+
+      const moveGhost = (e) => {
+        ghost.style.left = (e.clientX + 10) + 'px';
+        ghost.style.top = (e.clientY + 10) + 'px';
+
+        if (dropIndicator) {
+          dropIndicator.remove();
+          dropIndicator = null;
+        }
+
+        const hovered = document.elementFromPoint(e.clientX, e.clientY);
+        const sceneEl = hovered?.closest('.node');
+        if (sceneEl) {
+          dropTargetId = sceneEl.dataset.id;
+          const rect = sceneEl.getBoundingClientRect();
+          dropIndicator = document.createElement('div');
+          dropIndicator.className = 'drop-indicator';
+          dropIndicator.style.left = (rect.left - 10) + 'px';
+          dropIndicator.style.top = (rect.bottom + 2) + 'px';
+          document.getElementById('editor').appendChild(dropIndicator);
+        } else {
+          dropTargetId = null;
+        }
+      };
+
+      const cleanup = () => {
+        document.removeEventListener('mousemove', moveGhost);
+        document.removeEventListener('mouseup', cleanup);
+        document.body.removeChild(ghost);
+        if (dropIndicator) dropIndicator.remove();
+
+        if (dropTargetId) {
+          story.nodes[dropTargetId].choices.push({ text: 'Next', to: newNodeId });
+          tempNode.x = story.nodes[dropTargetId].x;
+          tempNode.y = story.nodes[dropTargetId].y + 250;
+        } else {
+          story.nodes[parentId].choices.push({ text: 'Next', to: newNodeId });
+        }
+
+        story.nodes[newNodeId] = tempNode;
+        renderCanvas();
+      };
+
+      document.addEventListener('mousemove', moveGhost);
+      document.addEventListener('mouseup', cleanup);
+    });
+  });
+}
+
+function setupEventDelegation() {
+  const canvas = document.getElementById('graph-canvas');
+
+  canvas.addEventListener('click', e => {
+    if (uiState.expandedNodeId && e.target.closest('.node[data-id="' + uiState.expandedNodeId + '"]')) {
+      return;
+    }
+    
+    const nodeEl = e.target.closest('.node');
+    if (!nodeEl) {
+      selectedNodeIds.clear();
+      renderCanvas();
+      return;
+    }
+
+    const id = nodeEl.dataset.id;
+    if (selectedNodeIds.has(id)) {
+      selectedNodeIds.delete(id);
+    } else {
+      selectedNodeIds.add(id);
+    }
+
+    document.getElementById('selection-indicator').style.opacity = selectedNodeIds.size ? '1' : '0';
+    renderCanvas();
+  });
+
+  canvas.addEventListener('mousedown', e => {
+    if (
+        e.target.tagName === 'TEXTAREA' ||
+        e.target.isContentEditable ||
+        e.target.closest('textarea') ||
+        e.target.closest('[contenteditable]')
+    ) {
+        return;
+    }
+
+    const nodeEl = e.target.closest('.node, .group');
+    if (!nodeEl) return;
+
+    const isGroup = nodeEl.classList.contains('group');
+    const id = isGroup ? nodeEl.dataset.groupId : nodeEl.dataset.id;
+
+    let obj;
+    if (isGroup) {
+      obj = story.groups.find(g => g.id === id);
+    } else {
+      obj = story.nodes[id];
+    }
+
+    if (!obj) return;
+
+    const rect = nodeEl.getBoundingClientRect();
+    dragState = { isGroup, id, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
+    nodeEl.style.zIndex = '40';
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!dragState) return;
+    const canvasRect = document.getElementById('graph-canvas').getBoundingClientRect();
+    const x = e.clientX - dragState.offsetX - canvasRect.left + window.scrollX;
+    const y = e.clientY - dragState.offsetY - canvasRect.top + window.scrollY;
+
+    if (dragState.isGroup) {
+      const g = story.groups.find(g => g.id === dragState.id);
+      if (g) { g.x = x + 130; g.y = y + 60; }
+    } else {
+      const n = story.nodes[dragState.id];
+      if (n) { n.x = x + 130; n.y = y + 160; }
+    }
+    renderCanvas();
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (dragState) {
+      const selector = dragState.isGroup 
+        ? `.group[data-group-id="${dragState.id}"]` 
+        : `.node[data-id="${dragState.id}"]`;
+      const el = document.querySelector(selector);
+      if (el) el.style.zIndex = '';
+      dragState = null;
+    }
+  });
+}
+
+document.getElementById('group-scenes').onclick = () => {
+  if (selectedNodeIds.size < 2) return alert("Select ≥2 scenes to group.");
+  const groupId = 'group_' + Math.random().toString(36).substr(2, 6);
+  const members = Array.from(selectedNodeIds);
+  let avgX = 0, avgY = 0;
+  members.forEach(id => {
+    avgX += story.nodes[id].x;
+    avgY += story.nodes[id].y;
+  });
+  story.groups.push({
+    id: groupId,
+    title: `Group ${story.groups.length + 1}`,
+    members,
+    x: avgX / members.length,
+    y: avgY / members.length,
+    collapsed: true
+  });
+  selectedNodeIds.clear();
+  renderCanvas();
+};
+
+function play(id) {
+  const node = story.nodes[id];
+  if (!node) return;
+  current = id;
+
+  const imageGallery = node.images.length
+    ? `
+        <div class="image-gallery">
+          ${node.images.map(src => `
+            <div class="gallery-item">
+              <img src="${src}" alt="">
+            </div>
+          `).join('')}
+        </div>
+      `
+    : '';
+
+  document.getElementById('play').innerHTML = `
+    ${imageGallery}
+    <p>${node.text}</p>
+    ${node.choices.map(c => 
+      `<button type="button" onclick="play('${c.to}')">${c.text}</button>`
+    ).join('')}
+    ${node.choices.length === 0 ? "<em>End.</em>" : ""}
+  `;
+}
+
+document.getElementById('add-node').onclick = () => {
+  const id = 'scene_' + Math.random().toString(36).substr(2, 6);
+  const canvas = document.getElementById('graph-canvas');
+  const rect = canvas.getBoundingClientRect();
+  story.nodes[id] = {
+    id,
+    title: `Scene ${Object.keys(story.nodes).length + 1}`,
+    text: 'Describe this moment...',
+    images: [],
+    choices: [],
+    x: rect.width / 2,
+    y: rect.height / 2
+  };
+  renderCanvas();
+};
+
+initializeLayout();
+renderCanvas();
+setupEventDelegation();
+play(story.start);
+</script>
+
+</body>
+</html>

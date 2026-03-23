@@ -1,0 +1,211 @@
+<style>
+/* hidden keeps BFC (preserves nav height) and removes scrollbar */
+.nav { overflow: hidden; }
+
+#nav-prompt {
+  font-family: monospace;
+  font-size: 1.05em;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: default;
+  user-select: none;
+}
+#nav-prefix {
+  color: #7aa2f7;
+}
+#nav-prompt-cursor {
+  display: inline-block;
+  width: 9px;
+  height: 1em;
+  background: currentColor;
+  margin-left: 3px;
+  cursor: pointer;
+  animation: nav-blink 1s steps(2, start) infinite;
+}
+@keyframes nav-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+#nav-history {
+  position: fixed;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  padding: 10px 14px;
+  min-width: 220px;
+  opacity: 0;
+  transform: translateY(-5px);
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 1000;
+  font-family: monospace;
+  color: #eaeaea;
+  font-size: 0.88em;
+}
+#nav-history.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.nav-history-title {
+  color: #888;
+  margin-bottom: 6px;
+}
+.nav-history-item {
+  padding: 3px 0;
+  cursor: pointer;
+}
+.nav-history-item:hover {
+  color: #7aa2f7;
+}
+
+/* Centre all nav items on the same midline */
+.nav li {
+  vertical-align: middle;
+}
+
+/* Use flexbox to vertically centre the prompt + links within the nav bar */
+@media (min-width: 600px) {
+  .nav-container {
+    display: flex;
+    align-items: center;
+  }
+  .nav ul {
+    position: static;
+    margin: 0;
+    margin-left: auto;
+  }
+}
+/* Dark mode toggle button in nav */
+dark-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  --dark-mode-toggle-icon-size: 1rem;
+  --dark-mode-toggle-light-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23888' d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
+  --dark-mode-toggle-dark-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
+}
+dark-mode-toggle::part(fieldset) {
+  padding-block: 0;
+}
+</style>
+
+<nav class="nav">
+  <div class="nav-container">
+    <div id="nav-prompt">
+      <span id="nav-prefix">&gt;&nbsp;</span><span id="nav-prompt-text"></span><span id="nav-prompt-cursor"></span>
+    </div>
+    <ul>
+      <li><a href="{{ '/posts/' | prepend: site.baseurl }}">Posts</a></li>
+      <li><a href="{{ '/tags/' | prepend: site.baseurl }}">Tags</a></li>
+      <li><a href="{{ '/about/' | prepend: site.baseurl }}">About</a></li>
+      <li class="nav-toggle-item">
+        <dark-mode-toggle id="dark-mode-toggle" appearance="toggle" permanent></dark-mode-toggle>
+      </li>
+      <li>
+        <a href="https://ko-fi.com/I3I5KYUQX" target="_blank">
+          <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="ko-fi" style="height: 1.5rem; vertical-align: middle;">
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- dropdown lives on body so it is never clipped by .nav overflow -->
+<div id="nav-history">
+  <div class="nav-history-title">history</div>
+  <div id="nav-history-list"></div>
+</div>
+
+<script>
+(function () {
+  function getPromptPath() {
+    var p = window.location.pathname.replace(/\/$/, "");
+    return p === "" ? "~/blog" : "~/blog" + p;
+  }
+
+  /* pre-fill invisibly so the element has its final width for positioning */
+  var fullText = getPromptPath();
+  var textEl   = document.getElementById("nav-prompt-text");
+  textEl.style.visibility = "hidden";
+  textEl.textContent = fullText;
+
+  /* called by toc.js after centering, or by the load fallback on non-TOC pages */
+  window.__startNavTyping = function () {
+    window.__startNavTyping = null;
+    textEl.textContent = "";
+    textEl.style.visibility = "";
+    var i = 0;
+    function type() {
+      if (i < fullText.length) {
+        textEl.textContent += fullText[i++];
+        setTimeout(type, 50);
+      }
+    }
+    setTimeout(type, 200);
+  };
+
+  /* fallback for pages without a TOC — replicate the same centering */
+  window.addEventListener("load", function () {
+    if (!window.__startNavTyping) return;
+    var navPrompt    = document.getElementById("nav-prompt");
+    var navContainer = document.querySelector(".nav-container");
+    var postEl       = document.querySelector("main");
+    if (navPrompt && navContainer && postEl) {
+      var tocWidth      = 180; /* matches #toc width in _toc.scss */
+      var postLeft      = postEl.getBoundingClientRect().left;
+      var tocLeft       = Math.max(8, (postLeft - tocWidth) / 2);
+      var tocCenter     = tocLeft + tocWidth / 2;
+      var containerLeft = navContainer.getBoundingClientRect().left;
+      var promptWidth   = navPrompt.offsetWidth;
+      navPrompt.style.marginLeft = Math.round(tocCenter - promptWidth / 2 - containerLeft) + "px";
+    }
+    window.__startNavTyping();
+  });
+
+  /* session history */
+  var path = window.location.pathname;
+  var hist = JSON.parse(sessionStorage.getItem("navHistory") || "[]");
+  if (!hist.includes(path)) hist.push(path);
+  sessionStorage.setItem("navHistory", JSON.stringify(hist));
+
+  /* render dropdown */
+  var histList = document.getElementById("nav-history-list");
+  hist.slice().reverse().forEach(function (p) {
+    var item = document.createElement("div");
+    item.className = "nav-history-item";
+    item.textContent = (p === "/" || p === "") ? "~/blog" : "~/blog" + p.replace(/\/$/, "");
+    item.onclick = function () { window.location.href = p; };
+    histList.appendChild(item);
+  });
+
+  /* position dropdown below the cursor element */
+  var cursor   = document.getElementById("nav-prompt-cursor");
+  var dropdown = document.getElementById("nav-history");
+
+  function positionDropdown() {
+    var rect    = cursor.getBoundingClientRect();
+    var prefix  = document.getElementById("nav-prefix");
+    var dropTop = rect.bottom + 6;
+    dropdown.style.top  = dropTop + "px";
+    dropdown.style.left = (prefix ? prefix.getBoundingClientRect().left : rect.left) + "px";
+
+    /* cap height just above the TOC "Contents" header if present */
+    var tocEl = document.getElementById("toc");
+    if (tocEl) {
+      var tocTop = tocEl.getBoundingClientRect().top;
+      dropdown.style.maxHeight  = Math.max(40, tocTop - dropTop - 10) + "px";
+      dropdown.style.overflowY  = "auto";
+    }
+  }
+
+  cursor.addEventListener("click", function (e) {
+    e.stopPropagation();
+    positionDropdown();
+    dropdown.classList.toggle("visible");
+  });
+
+  document.addEventListener("click", function () {
+    dropdown.classList.remove("visible");
+  });
+}());
+</script>

@@ -1,0 +1,213 @@
+<!-- citations.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Academic Citations – Clean</title>
+
+<style>
+:root {
+  --color-bg: #ffffff;
+  --color-fg: #1d1d1f;
+  --color-secondary: #86868b;
+  --color-border: #d2d2d7;
+  --color-cite: #007aff;
+  --comment-bg: #ffffff;
+  --shadow-tooltip: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --radius-lg: 16px;
+  --spacing-md: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c1c1e;
+    --color-fg: #f5f5f7;
+    --color-secondary: #98989d;
+    --color-border: #424245;
+    --comment-bg: #2c2c2e;
+  }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  padding: 3rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+p {
+  font-size: 1.05rem;
+  margin-bottom: 1.2rem;
+}
+
+.citation {
+  position: relative;
+  color: var(--color-cite);
+  text-decoration: none;
+  font-size: 0.9em;
+  vertical-align: super;
+  cursor: pointer;
+}
+
+.citation:hover {
+  text-decoration: underline;
+}
+
+.citation-tooltip {
+  position: absolute;
+  top: 1.8em;
+  left: 0;
+  min-width: 300px;
+  background: var(--comment-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-tooltip);
+  z-index: 2000;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.citation:hover .citation-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.citation-authors {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.citation-title {
+  font-style: italic;
+  color: var(--color-fg);
+  margin-bottom: 0.2rem;
+}
+
+.citation-source {
+  font-size: 0.9em;
+  color: var(--color-secondary);
+}
+
+.bibliography {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.bibliography h2 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.bib-list {
+  padding-left: 1.2rem;
+}
+
+.bib-item {
+  margin-bottom: 1rem;
+  font-size: 15px;
+}
+
+.bib-authors {
+  font-weight: 600;
+}
+
+.bib-title {
+  font-style: italic;
+  color: var(--color-fg);
+}
+
+.bib-source {
+  color: var(--color-secondary);
+  font-size: 0.95em;
+}
+
+.bib-link {
+  color: var(--color-cite);
+  text-decoration: none;
+  margin-left: 0.4rem;
+}
+
+.bib-link:hover {
+  text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Transformers in Modern AI</h1>
+
+<p>
+  Recent breakthroughs rely on the transformer architecture
+  <a href="#bib-vaswani2017" class="citation" id="cite-vaswani2017">[1]
+    <span class="citation-tooltip">
+      <div class="citation-authors">Vaswani et al.</div>
+      <div class="citation-title">Attention Is All You Need</div>
+      <div class="citation-source">NeurIPS 2017</div>
+    </span>
+  </a>,
+  later extended by models like BERT
+  <a href="#bib-devlin2019" class="citation" id="cite-devlin2019">[2]
+    <span class="citation-tooltip">
+      <div class="citation-authors">Devlin et al.</div>
+      <div class="citation-title">BERT: Pre-training of Deep Bidirectional Transformers</div>
+      <div class="citation-source">NAACL 2019</div>
+    </span>
+  </a>.
+</p>
+
+<div class="bibliography">
+  <h2>References</h2>
+  <ol class="bib-list">
+    <li id="bib-vaswani2017" class="bib-item">
+      <span class="bib-authors">Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., … & Polosukhin, I.</span>
+      (2017). 
+      <span class="bib-title">Attention Is All You Need</span>.
+      <span class="bib-source">Advances in Neural Information Processing Systems</span>.
+      <a href="https://arxiv.org/abs/1706.03762" class="bib-link">arXiv</a>
+    </li>
+    <li id="bib-devlin2019" class="bib-item">
+      <span class="bib-authors">Devlin, J., Chang, M. W., Lee, K., & Toutanova, K.</span>
+      (2019). 
+      <span class="bib-title">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</span>.
+      <span class="bib-source">Proceedings of NAACL-HLT</span>.
+      <a href="https://arxiv.org/abs/1810.04805" class="bib-link">arXiv</a>
+    </li>
+  </ol>
+</div>
+
+<script>
+// Smooth scroll to reference with highlight
+document.querySelectorAll('.citation').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetId = link.getAttribute('href').substring(1);
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const originalBg = targetEl.style.backgroundColor;
+      targetEl.style.backgroundColor = 'rgba(0, 122, 255, 0.1)';
+      setTimeout(() => targetEl.style.backgroundColor = originalBg, 1500);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

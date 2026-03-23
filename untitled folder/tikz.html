@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Live TikZ Playground (SVG Export)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- TikZJax -->
+  <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 0.25em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .playground {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      margin-bottom: 2.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 14px;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      background: #2d2d2d;
+      color: #f8f8f2;
+      line-height: 1.45;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 0.75rem;
+    }
+
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .output {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      text-align: center;
+      min-height: 120px;
+      position: relative;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .error-box {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: #fdecea;
+      color: #b00020;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      display: none;
+    }
+
+    .footer {
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Live TikZ Playground</h1>
+<p class="subtitle">Edit TikZ → Render → Download SVG</p>
+
+<div class="playground">
+  <textarea spellcheck="false">
+\begin{tikzpicture}[>=stealth]
+  \draw[->] (-2,0) -- (2,0) node[right] {$x$};
+  \draw[->] (0,-2) -- (0,2) node[above] {$y$};
+
+  \draw[blue, thick] (0,0) circle (1.5);
+  \node at (0.7,0.7) {$r$};
+\end{tikzpicture}
+  </textarea>
+
+  <div class="controls">
+    <button class="download-btn" disabled>Download SVG</button>
+    <div class="status">Rendering…</div>
+  </div>
+
+  <div class="output"></div>
+  <div class="error-box"></div>
+</div>
+
+<div class="footer">
+  Powered by <strong>TikZJax</strong> — real TikZ, real SVG
+</div>
+
+<script>
+function debounce(fn, delay = 300) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+function initPlayground(container) {
+  const textarea = container.querySelector('textarea');
+  const output = container.querySelector('.output');
+  const status = container.querySelector('.status');
+  const errorBox = container.querySelector('.error-box');
+  const downloadBtn = container.querySelector('.download-btn');
+
+  let observer;
+
+  function render() {
+    status.textContent = 'Rendering…';
+    errorBox.style.display = 'none';
+    downloadBtn.disabled = true;
+    output.innerHTML = '';
+
+    const script = document.createElement('script');
+    script.type = 'text/tikz';
+    script.textContent = textarea.value;
+    output.appendChild(script);
+
+    if (observer) observer.disconnect();
+
+    observer = new MutationObserver(() => {
+      const error = output.querySelector('.tikzjax-error');
+      const svg = output.querySelector('svg');
+
+      if (error) {
+        errorBox.textContent = error.textContent.trim();
+        errorBox.style.display = 'block';
+        status.textContent = 'Error';
+      } else if (svg) {
+        status.textContent = 'Rendered successfully';
+        downloadBtn.disabled = false;
+      }
+    });
+
+    observer.observe(output, { childList: true, subtree: true });
+  }
+
+  const debouncedRender = debounce(render, 400);
+  textarea.addEventListener('input', debouncedRender);
+
+  downloadBtn.addEventListener('click', () => {
+    const svg = output.querySelector('svg');
+    if (!svg) return;
+
+    const clone = svg.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+    const serializer = new XMLSerializer();
+    const svgText = serializer.serializeToString(clone);
+
+    const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tikz-diagram.svg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+  });
+
+  render();
+}
+
+document.querySelectorAll('.playground').forEach(initPlayground);
+</script>
+
+</body>
+</html>

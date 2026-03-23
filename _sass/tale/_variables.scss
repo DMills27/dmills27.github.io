@@ -1,0 +1,49 @@
+// Colors
+$default-color: #111 !default;
+$default-shade: #333 !default;
+$default-tint: #aaa !default;
+$grey-1: #979797 !default;
+$grey-2: #e5e5e5 !default;
+$grey-3: #f9f9f9 !default;
+$white: #fff !default;
+$blue: #5ae !default;
+$shadow-color: rgba(0, 0, 0, .2) !default;
+$code-color: #b67 !default;
+$highlight-color: #f80 !default;
+
+// Fonts
+@font-face {
+  font-family: 'Alegreya';
+  src: url('/Alegreya-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Alegreya';
+  src: url('/Alegreya-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Alegreya';
+  src: url('/Alegreya-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+$serif-primary: 'Alegreya', 'Georgia', 'Times New Roman', Times, serif !default;
+$serif-secondary: $serif-primary;
+$sans-serif: 'Source Sans Pro', 'Segoe UI', Helvetica, Arial, sans-serif !default;
+$monospaced: 'Source Code Pro', Menlo, Monaco, monospace !default;
+
+@mixin box-sizing($type: border-box) {
+  -webkit-box-sizing: $type;
+     -moz-box-sizing: $type;
+          box-sizing: $type;
+}
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+     -moz-transition: $args;
+          transition: $args;
+}

@@ -1,0 +1,93 @@
+// Code block styling — matches code-block-demo.html from abhinavsarkar.net.
+// highlight.js tokenises client-side; highlightjs-line-numbers plugin creates
+// a two-column table (td.hljs-ln-numbers | td.hljs-ln-code).
+// highlight-code.js appends a .code-lang-label <span> to each <pre>.
+
+// ── Theme-aware custom properties ────────────────────────────────────────────
+
+:root {
+  --code-bgcolor:      #fafafa;
+  --code-lnum-color:   #a42828;
+  --code-border-color: #ababab;
+}
+
+// ── Pre / code base ─────────────────────────────────────────────────────────
+
+pre {
+  padding: 0.2em;
+  overflow-x: auto;
+  font-size: 0.95em;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: var(--code-bgcolor);
+  position: relative;           // anchor for .code-lang-label
+}
+
+pre code {
+  display: block;
+}
+
+// The atom-one theme CSS (loaded dynamically) injects .hljs { padding: 0.5em }.
+// Kill it — table cell padding handles all spacing.
+pre code.hljs {
+  padding: 0;
+}
+
+// ── Line-number table (highlightjs-line-numbers plugin) ─────────────────────
+// Override global table styles from table.scss (border, padding on all tables).
+
+table.hljs-ln {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 0;
+}
+
+table.hljs-ln td {
+  border: none;
+  padding: 0;
+}
+
+// Demo's article-scoped values (the tighter set that wins by specificity).
+table.hljs-ln td.hljs-ln-numbers {
+  color: var(--code-lnum-color);
+  vertical-align: top;
+  border-right: 1px dashed var(--code-border-color);
+  padding: 0 0.3em 0 0.4em;
+  font-size: smaller;
+  user-select: none;
+  -webkit-user-select: none;
+  white-space: nowrap;
+}
+
+table.hljs-ln td.hljs-ln-code {
+  padding: 0 0.4em 0 0.3em;
+  width: 100%;
+}
+
+// ── Language label (injected by highlight-code.js) ──────────────────────────
+
+.code-lang-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #d9d9d9;
+  color: #545454;
+  font-family: $monospaced;
+  font-size: 0.72em;
+  line-height: 1;
+  padding: 0.35em 0.6em;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: 0.04em;
+}
+
+// ── Build-time line emphasis (<mark> inside Pandoc-highlighted blocks) ──────
+
+pre code mark {
+  background-color: var(--code-bgcolor);
+  color: inherit;
+  padding: 0.3em 0;
+  display: block;
+}

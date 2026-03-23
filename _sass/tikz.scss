@@ -1,0 +1,70 @@
+// _sass/tikz.scss
+// Styles for TikZ-compiled SVG diagrams embedded in posts.
+
+// ── <img> output (standard mode) ────────────────────────────────────────────
+.tikz-svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem auto;
+}
+
+// ── Inline-injected SVG (inline mode, via tikz-loader.js) ───────────────────
+.tikz-inline {
+  display: block;
+  margin: 1.5rem auto;
+  text-align: center;
+
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  // Hide the raw data-src attribute content while loading
+  &:not(.tikz-loaded):not(.tikz-error) {
+    min-height: 2rem; // prevent layout jump
+  }
+}
+
+// ── Block wrapper (apply to a <div> around the {% tikz %} tag) ──────────────
+// Usage:  <div class="block-tikz"> {% tikz name %} ... {% endtikz %} </div>
+.block-tikz {
+  margin: 0 auto 1.5rem auto;
+  width: 50%;
+  text-align: center;
+
+  &.large {
+    width: 80%;
+  }
+
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+    &.large { width: 100%; }
+  }
+}
+
+// ── Inline wrapper (for small formula-sized diagrams) ───────────────────────
+// Usage:  <span class="inline-tikz"> {% tikz name %} ... {% endtikz %} </span>
+.inline-tikz {
+  display: inline-flex;
+  height: 1.2em;
+  vertical-align: text-bottom;
+
+  img, svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
+// ── Error placeholder ────────────────────────────────────────────────────────
+.tikz-error {
+  border: 1px solid #c33;
+  background: #fff5f5;
+  color: #c33;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-family: $monospaced;
+  font-size: 0.85em;
+  margin: 1rem 0;
+}

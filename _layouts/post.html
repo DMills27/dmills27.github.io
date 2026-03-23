@@ -1,0 +1,63 @@
+---
+layout: default
+---
+
+<div class="post">
+  <div class="post-info">
+    {% if page.author or page.date %}
+    <span>Written</span>
+    {% if page.author %}
+    <span>by</span>
+    {% if page.author %}
+        {{ page.author }}
+    {% else %}
+        {{ site.author.name }}
+    {% endif %}
+      <br>
+    {% endif %}
+
+    {% if page.date %}
+      <span>on&nbsp;</span><time datetime="{{ page.date }}">{{ page.date | date: "%Y-%m-%d" }}</time>
+    {% endif %}
+    {% endif %}
+  </div>
+
+  <h1 class="post-title">{{ page.title }}</h1>
+
+  {% assign raw_tags = page.tags | default: empty %}
+
+  {% if raw_tags != empty %}
+    {% if raw_tags.first %}
+      {% assign pt = raw_tags | sort %}
+    {% else %}
+      {% assign pt = raw_tags | split: "," | sort %}
+    {% endif %}
+
+    <div class="tags-clouds">
+      {% for tag in pt %}
+        <a href="{{ '/tags/#' | append: tag | relative_url }}">{{ tag | strip }}</a>
+      {% endfor %}
+    </div><br />
+  {% endif %}
+
+
+  <div class="post-line"></div>
+
+  {{ content }}
+  <!-- bibtex-anchor -->
+</div>
+
+{% if page.comments %}
+  {% include disqus_comments.html %}
+{% endif %}
+
+<div class="pagination">
+  {% if page.next.url %}
+    <a href="{{ page.next.url | prepend: site.baseurl }}" class="left arrow">&#8592;</a>
+  {% endif %}
+  {% if page.previous.url %}
+    <a href="{{ page.previous.url | prepend: site.baseurl }}" class="right arrow">&#8594;</a>
+  {% endif %}
+
+  <a href="#" class="top">⇈</a>
+</div>

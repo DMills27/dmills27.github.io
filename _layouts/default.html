@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include head.html %}
+  <body>
+
+    {% include navigation.html %}
+
+    <main>
+      {{ content }}
+    </main>
+
+    {% include footer.html %}
+  </body>
+  
+  <!-- MathJax Config -->
+  <script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      ignoreHtmlClass: 'tex2jax_ignore',
+      processHtmlClass: 'tex2jax_process'
+    }
+  };
+  </script>
+
+  <!-- MathJax v3 -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ '/assets/js/sidenotes.js' | relative_url }}"></script>
+
+  <!-- Highlight.js (theme CSS is loaded dynamically in highlight-code.js) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+  <!-- Line numbers plugin (creates table.hljs-ln with number/code columns) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+
+  <!-- Custom code highlighter: hljs + line numbers + language labels -->
+  <script src="{{ '/assets/js/highlight-code.js' | relative_url }}"></script>
+
+  <script src="{{ '/assets/js/popup-lite.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/highlight-comments.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/tikz-loader.js' | relative_url }}"></script>
+</html>

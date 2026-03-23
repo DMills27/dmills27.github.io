@@ -1,27 +1,22 @@
-# Bundler cache
-.bundle
-vendor
+# Jekyll build output
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# Ruby / Bundler
+vendor/
+.bundle/
 Gemfile.lock
 
-# Jekyll cache
-.jekyll-cache
-.jekyll-metadata
-_site
+# TikZ compilation working directory (intermediate .tex, .pdf, .log, .aux)
+# Jekyll ignores _tikz/ automatically (starts with _), but exclude from git too
+_tikz/
 
-# RubyGems
-*.gem
+# Generated TikZ SVG assets — rebuilt at jekyll build time from _plugins/tikz.rb
+# Commit these if you want the site to be deployable without a TeX installation.
+# Leave them gitignored if you prefer a clean repo and always build with Nix.
+assets/tikz/
 
-# NPM dependencies
-node_modules
-package-lock.json
-
-# IDE configurations
-.idea
-.vscode/*
-!.vscode/settings.json
-!.vscode/extensions.json
-!.vscode/tasks.json
-
-# Misc
-_sass/vendors
-assets/js/dist
+# Nix
+result
+result-*
