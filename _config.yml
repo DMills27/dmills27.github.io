@@ -23,11 +23,6 @@ kramdown:
 include:
   - _pages
 
-exclude:
-  - gemset.nix
-  - flake.nix
-  - flake.lock
-
 # Assets
 sass:
   sass_dir:     _sass
@@ -53,8 +48,19 @@ bibtex:
   bibliography: _bib/bibliography.bib
   style:        apa
 
-# Excludes
-exclude: [ Gemfile, Gemfile.lock, tale.gemspec, anime, "untitled folder", dark-mode-toggle.mjs ]
+# Files excluded from the built _site/ (never served to visitors)
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - tale.gemspec
+  - flake.nix
+  - flake.lock
+  - gemset.nix
+  - gemset-filtered.nix
+  - vendor
+  - CLAUDE.md
+  - README.md
+  - LICENSE
 
 # Disqus (Set to your disqus id)
 disqus:         jekyll-tale

@@ -1,129 +1,71 @@
-# Tale
+# dmills27.github.io
 
-[![Gem Version](https://badge.fury.io/rb/tale.svg)](https://badge.fury.io/rb/tale)
+Personal blog built with [Jekyll](https://jekyllrb.com/) using a customised Tale theme, deployed to GitHub Pages via a Nix-based CI pipeline.
 
-Tale is a minimal Jekyll theme curated for storytellers. Checkout the demo [here](https://chesterhow.github.io/tale/).
+## Local development
 
-![Tale screenshot](http://i.imgur.com/pXZrtmo.png)
-
-## Features
-- Easy installation
-- Compatible with GitHub Pages
-- Responsive design (looks just as good on mobile)
-- Syntax highlighting, with the help of Pygments
-- Markdown and HTML text formatting
-- Pagination of posts
-- [Disqus comments (can be enabled if needed)](#enabling-comments)
-
-## Installation
-There are 3 ways to install this theme
-
-1. Install it as a Ruby Gem (for self-hosted sites)
-2. Install it with the `jekyll-remote-theme` plugin (for GitHub Pages hosted sites)
-3. Fork the project directly
-
-### Ruby Gem method
-1. Add this line to your `Gemfile`:
-
-```ruby
-gem "tale"
-```
-
-2. Install the theme's gems and dependencies:
+The build environment is managed with a [Nix flake](flake.nix), which pins all Ruby gem and system dependencies for reproducibility. You need [Nix](https://nixos.org/download/) with flakes enabled.
 
 ```bash
-$ bundle
+# Enter the dev shell (installs all deps into the Nix store)
+nix develop
+
+# Install gems into vendor/bundle
+bundle install
+
+# Serve locally at http://127.0.0.1:4000/
+bundle exec jekyll serve
 ```
 
-3. In `_config.yml` add these lines:
+`jekyll serve` watches for file changes and rebuilds automatically. Changes to `_config.yml` require a manual restart.
 
-```yaml
-theme:      tale
+### NixOS vs other operating systems
 
-permalink:  /:year-:month-:day/:title
-paginate:   5
-```
+| | NixOS | Linux with Nix (Ubuntu, etc.) | macOS (Apple Silicon) |
+|---|---|---|---|
+| `nix develop` works | ✓ | ✓ | ✓ |
+| dart-sass auto-patched | ✓ via shellHook | ✓ via shellHook | not needed |
+| Supported system | `x86_64-linux` | `x86_64-linux` | `aarch64-darwin` |
 
-Remove any other `theme:` lines.
+**Why patching is needed on Linux:** The `sass-embedded` gem bundles a pre-compiled `dart` binary linked against the standard glibc dynamic linker at `/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2`. On NixOS (and on any Linux system using Nix), glibc lives inside the Nix store instead. The `devShell` `shellHook` in `flake.nix` uses `patchelf` to rewrite the binary's interpreter path to the correct Nix store location after `bundle install` downloads it.
 
-4. Rename `index.md` to `index.html`. Without this, the `jekyll-paginate` gem will not work.
+**macOS:** No patching is needed. The `aarch64-darwin` sass-embedded variant ships a native Mach-O binary. The `shellHook` patch step is Linux-only and is skipped automatically.
 
-5. In `about.md`, change the `layout:` field to `post`:
-
-```Markdown
-layout: post
-```
-
-### GitHub Pages method
-1. Add these 2 lines in to your `Gemfile`:
-
-```ruby
-gem "jekyll-remote-theme"
-gem "jekyll-paginate"
-```
-
-2. Install the newly added gems:
+### Updating gems
 
 ```bash
-$ bundle
+# After editing Gemfile, regenerate both lockfiles
+bundle install           # updates Gemfile.lock
+nix run github:inscapist/bundix -- -l   # regenerates gemset.nix
 ```
 
-3. In `_config.yml` add these lines:
+`gemset-filtered.nix` does not need manual updates — it filters `gemset.nix` at build time to remove platform variants (android, musl) that cannot build on standard Linux/macOS.
 
-```yaml
-remote_theme: chesterhow/tale
+## Deployment
 
-permalink:    /:year-:month-:day/:title
-paginate:     5
+Pushing to `main` triggers the GitHub Actions workflow (`.github/workflows/pages-deploy.yml`), which:
 
-plugins:
-  - jekyll-paginate
-  - jekyll-remote-theme
+1. Installs Nix via `DeterminateSystems/nix-installer-action`
+2. Runs `nix develop` to enter the reproducible build environment
+3. Runs `bundle install && bundle exec jekyll build`
+4. Deploys the `_site/` output to GitHub Pages
+
+## Structure
+
 ```
-
-Remove any other `theme:` or `remote_theme:` lines.
-
-4. Rename `index.md` to `index.html`. Without this, the `jekyll-paginate` gem will not work.
-
-5. In `about.md`, change the `layout:` field to `post`:
-
-```Markdown
-layout: post
+_posts/          Blog posts (YYYY-MM-DD-slug.md)
+_pages/          Static pages (about, posts index, tags)
+_layouts/        HTML layout templates
+_includes/       HTML partials (head, nav, footer, etc.)
+_sass/           SCSS source files
+assets/
+  fonts/         Self-hosted web fonts (Alegreya, Source Sans/Code Pro, Merriweather)
+  js/            JavaScript (sidenotes, popups, highlight, anime.js, etc.)
+_plugins/        Jekyll plugins (BibTeX citations, TikZ diagrams)
+_bib/            BibTeX bibliography
+_tikz/           TikZ build artefacts (auto-generated, do not edit)
 ```
-
-### Fork method
-1. Fork this repository
-
-2. Delete the unnecessary files/folders: `CODE_OF_CONDUCT.md`, `LICENSE`, `README.md`, `tale.gemspec`
-
-3. Delete the `baseurl` line in `_config.yml`:
-
-```yaml
-baseurl:  "/tale"   # delete this line
-```
-
-## Usage
-Once you've installed the theme, you're ready to work on your Jekyll site. To start off, I would recommend updating `_config.yml` with your site's details.
-
-To build and serve your site, run:
-
-```bash
-$ bundle exec jekyll serve
-```
-
-And you're all set! Head over to http://127.0.0.1:4000/ to see your site in action.
-
-### Enabling Comments
-Comments are disabled by default. To enable them, look for the following line in `_config.yml` and change `jekyll-tale` to your site's Disqus id.
-
-```yml
-disqus: jekyll-tale
-```
-
-Next, add `comments: true` to the YAML front matter of the posts which you would like to enable comments for.
-
-## Contributing
-Found a bug or have a suggestion? Feel free to create an issue or make a pull request!
 
 ## License
-See [LICENSE](https://github.com/chesterhow/tale/blob/master/LICENSE)
+
+MIT — see [LICENSE](LICENSE).

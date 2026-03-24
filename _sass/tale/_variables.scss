@@ -14,19 +14,19 @@ $highlight-color: #f80 !default;
 // Fonts
 @font-face {
   font-family: 'Alegreya';
-  src: url('/Alegreya-Regular.woff2') format('woff2');
+  src: url('/assets/fonts/Alegreya-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: 'Alegreya';
-  src: url('/Alegreya-Italic.woff2') format('woff2');
+  src: url('/assets/fonts/Alegreya-Italic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
 }
 @font-face {
   font-family: 'Alegreya';
-  src: url('/Alegreya-Bold.woff2') format('woff2');
+  src: url('/assets/fonts/Alegreya-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
 }
