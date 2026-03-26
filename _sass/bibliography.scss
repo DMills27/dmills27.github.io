@@ -1,4 +1,6 @@
 // Bibliography section appended to posts that contain citations.
+// Entries are sorted alphabetically and numbered [1], [2], … to match
+// the inline citation markers in the post body.
 
 .bibliography {
   margin-top: 3rem;
@@ -26,17 +28,19 @@
     // citeproc-ruby wraps each entry in a <div class="csl-entry">
     .csl-entry {
       padding-left: 1.5rem;
-      text-indent: -1.5rem;  // hanging indent
+      text-indent: -1.5rem;  // hanging indent (aligns wrapped lines under author)
     }
   }
 }
 
-// Inline citation markers — <span class="citation"> wrapping the formatted text.
-// For author-date styles (APA) the text is already "(Smith, 2020)".
-// For numeric styles (IEEE) it renders as "[1]".
+// Inline citation markers — <span class="citation">[<a>n</a>]</span>
 .citation {
+  font-size: 0.85em;
+  vertical-align: super;
+  line-height: 0;
+
   a {
-    color: inherit;
+    color: #7aa2f7;
     text-decoration: none;
     border-bottom: none;
     &:hover { text-decoration: underline; }

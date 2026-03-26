@@ -92,7 +92,9 @@
       var containerLeft = navContainer.getBoundingClientRect().left;
       var tocCenter     = tocLeft + tocWidth / 2;
       var promptWidth   = navPrompt.offsetWidth;
-      navPrompt.style.marginLeft = Math.round(tocCenter - promptWidth / 2 - containerLeft) + 'px';
+      /* Clamp so the prompt never starts before x = 8 (avoids left-edge clip). */
+      var ml = Math.round(tocCenter - promptWidth / 2 - containerLeft);
+      navPrompt.style.marginLeft = Math.max(ml, 8 - containerLeft) + 'px';
     }
 
     /* now that centering is done, start the typing animation (runs once) */

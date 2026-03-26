@@ -31,7 +31,7 @@ pre code {
 // The atom-one theme CSS (loaded dynamically) injects .hljs { padding: 0.5em }.
 // Kill it — table cell padding handles all spacing.
 pre code.hljs {
-  padding: 0;
+  padding: 0 !important;
 }
 
 // ── Line-number table (highlightjs-line-numbers plugin) ─────────────────────

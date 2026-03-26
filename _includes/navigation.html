@@ -149,14 +149,18 @@ dark-mode-toggle::part(fieldset) {
     var navPrompt    = document.getElementById("nav-prompt");
     var navContainer = document.querySelector(".nav-container");
     var postEl       = document.querySelector("main");
-    if (navPrompt && navContainer && postEl) {
+    /* Only apply the gutter-positioning on wide screens where there is
+       left-margin space for the prompt (matches the > 900px guard in toc.js). */
+    if (navPrompt && navContainer && postEl && window.innerWidth > 900) {
       var tocWidth      = 180; /* matches #toc width in _toc.scss */
       var postLeft      = postEl.getBoundingClientRect().left;
       var tocLeft       = Math.max(8, (postLeft - tocWidth) / 2);
       var tocCenter     = tocLeft + tocWidth / 2;
       var containerLeft = navContainer.getBoundingClientRect().left;
       var promptWidth   = navPrompt.offsetWidth;
-      navPrompt.style.marginLeft = Math.round(tocCenter - promptWidth / 2 - containerLeft) + "px";
+      /* Clamp so the prompt never starts before x = 8 (avoids left-edge clip). */
+      var ml = Math.round(tocCenter - promptWidth / 2 - containerLeft);
+      navPrompt.style.marginLeft = Math.max(ml, 8 - containerLeft) + "px";
     }
     window.__startNavTyping();
   });
