@@ -59,6 +59,13 @@
   color: #7aa2f7;
 }
 
+/* Hide the terminal prompt on mobile — no gutter space for it */
+@media (max-width: 599px) {
+  #nav-prompt {
+    display: none;
+  }
+}
+
 /* Centre all nav items on the same midline */
 .nav li {
   vertical-align: middle;
