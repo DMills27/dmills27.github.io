@@ -112,22 +112,61 @@
         links.forEach(function (l) { l.classList.remove('active'); });
         this.classList.add('active');
         target.scrollIntoView({ behavior: 'smooth' });
-        toc.classList.remove('open');
+        closeDrawer();
       }
     });
   });
 
-  /* --- mobile toggle --- */
-  var menuBtn = document.getElementById('tocMenuBtn');
-  if (menuBtn) {
-    menuBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      toc.classList.toggle('open');
-    });
-    document.addEventListener('click', function (e) {
-      if (window.innerWidth <= 900 && !toc.contains(e.target) && e.target !== menuBtn) {
-        toc.classList.remove('open');
-      }
+  /* --- drawer open / close helpers --- */
+  var pullTab = document.getElementById('toc-pull-tab');
+  var overlay = document.getElementById('toc-overlay');
+
+  function openDrawer() {
+    toc.classList.add('open');
+    if (overlay)  overlay.classList.add('active');
+    if (pullTab)  pullTab.classList.add('hidden');
+  }
+
+  function closeDrawer() {
+    toc.classList.remove('open');
+    if (overlay)  overlay.classList.remove('active');
+    if (pullTab)  pullTab.classList.remove('hidden');
+  }
+
+  /* --- pull tab click / keyboard --- */
+  if (pullTab) {
+    pullTab.addEventListener('click', function () { openDrawer(); });
+    pullTab.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrawer(); }
     });
   }
+
+  /* --- overlay tap to dismiss --- */
+  if (overlay) {
+    overlay.addEventListener('click', function () { closeDrawer(); });
+  }
+
+  /* --- swipe gesture: right-from-edge = open, left-while-open = close --- */
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var SWIPE_MIN   = 55;  /* minimum horizontal distance to count as a swipe */
+  var EDGE_ZONE   = 40;  /* px from left edge that triggers open swipe */
+
+  document.addEventListener('touchstart', function (e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function (e) {
+    if (window.innerWidth > 900) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dy) > Math.abs(dx)) return; /* mostly vertical — ignore */
+
+    if (dx > SWIPE_MIN && touchStartX < EDGE_ZONE && !toc.classList.contains('open')) {
+      openDrawer();
+    } else if (dx < -SWIPE_MIN && toc.classList.contains('open')) {
+      closeDrawer();
+    }
+  }, { passive: true });
 }());

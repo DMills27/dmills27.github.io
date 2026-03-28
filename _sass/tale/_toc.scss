@@ -5,7 +5,7 @@
 
 #toc {
   position: fixed;
-  top: 50vh;
+  top: 58vh;
   transform: translateY(-50%);
   width: 180px;
   height: fit-content;
@@ -63,7 +63,9 @@
   font-family: $sans-serif;
 }
 
-.toc-menu-button {
+/* pull tab and overlay are mobile-only */
+#toc-pull-tab,
+#toc-overlay {
   display: none;
 }
 
@@ -77,9 +79,9 @@
     max-height: none;
     background: $white;
     padding: 2rem;
-    box-shadow: 2px 0 8px rgba(0,0,0,.1);
+    box-shadow: 2px 0 8px rgba(0,0,0,.15);
     overflow-y: auto;
-    transition: left 0.25s ease;
+    transition: left 0.28s ease;
     z-index: 1000;
 
     &.open {
@@ -87,17 +89,48 @@
     }
   }
 
-  .toc-menu-button {
-    display: block;
+  /* slim pull tab on the left edge */
+  #toc-pull-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: fixed;
-    top: 14px;
-    left: 14px;
-    font-size: 20px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 64px;
     background: $white;
     border: 1px solid $grey-2;
-    padding: 4px 9px;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
     cursor: pointer;
     z-index: 1001;
-    font-family: $sans-serif;
+    font-size: 18px;
+    color: $grey-1;
+    box-shadow: 2px 0 6px rgba(0,0,0,.1);
+    transition: opacity 0.2s ease;
+    user-select: none;
+
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  /* dim overlay behind open drawer */
+  #toc-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    pointer-events: none;
+    z-index: 999;
+    transition: background 0.28s ease;
+
+    &.active {
+      background: rgba(0,0,0,0.35);
+      pointer-events: auto;
+    }
   }
 }
