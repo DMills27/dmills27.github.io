@@ -2,242 +2,286 @@
  * dark.css
  * Applied when media="(prefers-color-scheme: dark)" or media="all" (user-selected dark).
  * Overrides the light theme compiled into main.css.
+ *
+ * Palette — Apple dark system colors
+ *   bg:          #111111   near-black (Apple website dark)
+ *   surface:     #1c1c1e   Apple secondarySystemBackground
+ *   text:        #f5f5f7   Apple light gray for dark contexts
+ *   text-sec:    #a1a1a6   Apple secondaryLabel
+ *   muted:       #6e6e73   Apple tertiaryLabel / system gray 2
+ *   border:      #2c2c2e   Apple separator dark
+ *   blue:        #2997ff   Apple blue dark mode
  */
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
 
 html, body {
-  background-color: #1d1c1a;
-  color: #d4cec6;
+  background-color: #111111;
+  color: #f5f5f7;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #c0bab2;
+  color: #f5f5f7;
 }
 
 a {
-  color: #7ab8ff;
+  color: #2997ff;
 }
 
 hr {
-  border-color: #38352f;
+  border-color: #2c2c2e;
 }
 
 blockquote {
-  border-left-color: #38352f;
-  color: #8a847c;
+  border-left-color: #2c2c2e;
+  color: #a1a1a6;
 }
 
 /* ── Code block custom properties ─────────────────────────────────────────── */
 
 :root {
-  --code-bgcolor:      #282c34;
-  --code-lnum-color:   #d58989;
-  --code-border-color: #545454;
+  --code-bgcolor:      #1c1c1e;
+  --code-lnum-color:   #d07070;
+  --code-border-color: #3a3a3c;
 }
 
 /* Inline code */
 code {
-  color: #e0a0a0;
+  background-color: #1c1c1e;
+  color: #e0820a;
 }
 
 /* Language label */
 .code-lang-label {
   background-color: #2e2c28;
-  color: #8a847c;
+  color: #6e6e73;
 }
 
 /* ── Post ──────────────────────────────────────────────────────────────────── */
 
 .post-info {
-  color: #8a847c;
+  color: #6e6e73;
 }
 
 .post-title {
-  color: #c0bab2;
+  color: #f5f5f7;
 }
 
 .post-line {
-  border-top-color: #c0bab2;
+  border-top-color: #f5f5f7;
 }
 
 .post img + em,
 .post div.svg-img + em {
-  color: #8a847c;
+  color: #6e6e73;
 }
 
 /* ── Navigation ────────────────────────────────────────────────────────────── */
 
 .nav {
-  border-bottom: 1px solid #38352f;
+  border-bottom: 1px solid #2c2c2e;
 }
 
 .nav li {
-  color: #8a847c;
+  color: #a1a1a6;
 }
 
 .nav-title {
-  color: #d4cec6;
+  color: #f5f5f7;
 }
 
 .nav a {
-  color: #8a847c;
+  color: #a1a1a6;
 }
 
 .nav a:hover,
 .nav li:hover,
 .nav li:focus {
-  color: #d4cec6;
+  color: #f5f5f7;
 }
 
 footer span {
-  color: #8a847c;
+  color: #6e6e73;
 }
 
 /* ── Tables ────────────────────────────────────────────────────────────────── */
 
 table {
-  border-color: #38352f;
+  border-color: #2c2c2e;
 }
 
 table th {
-  border-color: #38352f;
+  border-color: #2c2c2e;
 }
 
 table th:not([colspan]) {
-  border-bottom-color: #38352f;
+  border-bottom-color: #2c2c2e;
 }
 
 table td {
-  border-color: #38352f;
+  border-color: #2c2c2e;
 }
 
 /* ── Sidenotes / footnotes ─────────────────────────────────────────────────── */
 
 .sidenote,
 .marginnote {
-  color: #8a847c;
+  color: #a1a1a6;
 }
 
 .footnotes {
-  border-top-color: #38352f;
-  color: #8a847c;
+  border-top-color: #2c2c2e;
+  color: #a1a1a6;
 }
 
 /* ── TOC ───────────────────────────────────────────────────────────────────── */
 
 #toc {
-  border-color: #38352f;
+  background: #111111;
+  border-color: #2c2c2e;
+}
+
+.toc-mini-header {
+  color: #f5f5f7;
 }
 
 #toc a {
-  color: #8a847c;
+  color: #6e6e73;
 }
 
-#toc a:hover {
-  color: #d4cec6;
+#toc a:hover,
+#toc a.active {
+  color: #f5f5f7;
+}
+
+#toc-pull-tab {
+  background: #1c1c1e;
+  border-color: #2c2c2e;
+  color: #a1a1a6;
 }
 
 /* ── Tags ──────────────────────────────────────────────────────────────────── */
 
 .tag {
   background-color: #2a2825;
-  border-color: #38352f;
-  color: #c0bab2;
+  border-color: #2c2c2e;
+  color: #f5f5f7;
 }
 
 .tags-header-title {
-  color: #c0bab2;
+  color: #f5f5f7;
 }
 
 .tags-header-line {
-  border-top-color: #c0bab2;
+  border-top-color: #f5f5f7;
 }
 
 .tags-clouds a {
-  color: #d4cec6;
-  background: rgba(255, 255, 255, 0.06);
+  color: #f5f5f7;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #2c2c2e;
 }
 
 .tags-clouds a:hover,
 .tags-clouds a:active {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(41, 151, 255, 0.12);
+  border-color: #2997ff;
+  color: #2997ff;
 }
 
 .tags-item-label {
-  color: #c0bab2;
+  color: #6e6e73;
 }
 
 .tags-post-title {
-  color: #d4cec6;
+  color: #f5f5f7;
 }
 
 .tags-post-line {
-  border-top-color: #c0bab2;
+  border-top-color: #a1a1a6;
 }
 
 .tags-post-meta {
-  color: #8a847c;
+  color: #6e6e73;
 }
 
 /* ── Post listing (catalogue) ──────────────────────────────────────────────── */
 
 .catalogue-item {
-  border-bottom-color: #38352f;
-  color: #d4cec6;
+  border-bottom-color: #2c2c2e;
+  color: #f5f5f7;
 }
 
 .catalogue-time {
-  color: #8a847c;
+  color: #6e6e73;
 }
 
 .catalogue-title {
-  color: #c0bab2;
+  color: #f5f5f7;
 }
 
 .catalogue-line {
-  border-top-color: #c0bab2;
+  border-top-color: #3a3a3c;
 }
 
 /* ── Pagination ────────────────────────────────────────────────────────────── */
 
 .pagination {
-  border-top-color: #38352f;
+  border-top-color: #2c2c2e;
+}
+
+.pagination .top,
+.pagination .arrow {
+  color: #a1a1a6;
 }
 
 /* ── Bibliography ──────────────────────────────────────────────────────────── */
 
 .bibliography {
-  border-top-color: #38352f;
-  color: #8a847c;
+  border-top-color: #2c2c2e;
+  color: #a1a1a6;
+}
+
+.bibliography h2 {
+  color: #6e6e73;
 }
 
 .citation a {
-  color: #7ab8ff;
+  color: #2997ff;
 }
 
 /* ── Popups ────────────────────────────────────────────────────────────────── */
 
 .popup {
-  background-color: #252321;
-  border-color: #38352f;
-  color: #d4cec6;
+  background-color: #1c1c1e;
+  border-color: #2c2c2e;
+  color: #f5f5f7;
 }
 
 .popup-titlebar {
-  background-color: #2a2825;
-  border-bottom-color: #38352f;
-  color: #c0bab2;
+  background-color: #2c2c2e;
+  border-bottom-color: #3a3a3c;
+  color: #f5f5f7;
 }
 
 .popup-close {
-  color: #8a847c;
+  color: #6e6e73;
 }
 
 /* ── Highlight comments ────────────────────────────────────────────────────── */
 
 .hc-tooltip {
-  background-color: #2a2825;
-  border-color: #38352f;
-  color: #d4cec6;
+  background-color: #1c1c1e;
+  border-color: #2c2c2e;
+  color: #f5f5f7;
+}
+
+/* ── Details / summary ─────────────────────────────────────────────────────── */
+
+details summary {
+  color: #a1a1a6;
+}
+
+details[open] summary {
+  color: #f5f5f7;
 }

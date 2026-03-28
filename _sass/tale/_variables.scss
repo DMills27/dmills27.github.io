@@ -1,15 +1,15 @@
-// Colors
-$default-color: #111 !default;
-$default-shade: #333 !default;
-$default-tint: #aaa !default;
-$grey-1: #979797 !default;
-$grey-2: #e5e5e5 !default;
-$grey-3: #f9f9f9 !default;
-$white: #fff !default;
-$blue: #5ae !default;
-$shadow-color: rgba(0, 0, 0, .2) !default;
-$code-color: #b67 !default;
-$highlight-color: #f80 !default;
+// Colors — Apple design language
+$default-color:   #1d1d1f !default;   // Apple near-black
+$default-shade:   #1d1d1f !default;
+$default-tint:    #86868b !default;   // Apple system gray
+$grey-1:          #6e6e73 !default;   // subdued / secondary text
+$grey-2:          #d2d2d7 !default;   // borders and separators
+$grey-3:          #f9f9f9 !default;   // subtle surface backgrounds
+$white:           #ffffff !default;
+$blue:            #0071e3 !default;   // Apple signature blue
+$shadow-color:    rgba(0, 0, 0, .06) !default;
+$code-color:      #b46000 !default;   // warm amber for inline code
+$highlight-color: #f80    !default;
 
 // Fonts
 @font-face {
