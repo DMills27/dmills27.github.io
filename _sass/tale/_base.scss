@@ -1,11 +1,11 @@
 * {
   @include box-sizing;
-  line-height: 1.5;
 }
 
 html,
 body {
   color: $default-color;
+  line-height: 1.5;
   margin: 0;
   padding: 0;
 }
